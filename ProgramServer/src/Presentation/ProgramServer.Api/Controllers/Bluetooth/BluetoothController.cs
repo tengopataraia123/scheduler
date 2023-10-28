@@ -5,7 +5,7 @@ using ProgramServer.Application.Services.Bluetooth;
 
 namespace ProgramServer.Api.Controllers.Bluetooth;
 
-[Authorize]
+//[Authorize]
 [Route("[controller]")]
 public class BluetoothController : ControllerBase
 {
@@ -19,15 +19,16 @@ public class BluetoothController : ControllerBase
         _bluetoothService = bluetoothService;
     }
     
-    [Authorize]
+    //[Authorize]
     [HttpGet("[action]")]
-    public async Task<IActionResult> GetBluetoothCodes()
+    public async Task<IActionResult> GetBluetoothCodes(int userId)
     {
-        var result = await _bluetoothService.GetBluetoothCodes(_userId);
+        //var result = await _bluetoothService.GetBluetoothCodes(_userId);
+        var result = await _bluetoothService.GetBluetoothCodes(userId);
         return Ok(result);
     }
     
-    [Authorize]
+    //[Authorize]
     [HttpPost("[action]")]
     public async Task<IActionResult> ScannedBluetoothCodes([FromBody] List<string> codes)
     {
