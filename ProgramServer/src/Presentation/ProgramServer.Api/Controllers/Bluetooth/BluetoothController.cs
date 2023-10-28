@@ -15,7 +15,7 @@ public class BluetoothController : ControllerBase
 
     public BluetoothController(IBluetoothService bluetoothService)
     {
-        _userId = User.Claims.Where(o=>o.Type == ClaimTypes.NameIdentifier).Select(o=>Convert.ToInt32(o.Value)).FirstOrDefault();
+        //_userId = User.Claims.Where(o=>o.Type == ClaimTypes.NameIdentifier).Select(o=>Convert.ToInt32(o.Value)).FirstOrDefault();
         _bluetoothService = bluetoothService;
     }
     
