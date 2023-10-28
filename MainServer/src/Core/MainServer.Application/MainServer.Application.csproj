@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MainServer.Domain\MainServer.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Common\" />
+    <None Remove="Common\Mappings\" />
+    <None Remove="Services\Programs\Access\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common\" />
+    <Folder Include="Common\Mappings\" />
+    <Folder Include="Services\Programs\Access\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,64 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Debug and Bin
+/bin/
+/obj/
+
+# Ignore Node.js dependencies
+/node_modules
+
+# Ignore built files
+/build
+/dist
+
+# Ignore development files
+# /.env
+/.env.local
+/.env.development.local
+/.env.test.local
+/.env.production.local
+
+# Ignore debugging and logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+debug.log
+*.log
+
+# Ignore Visual Studio Code specific files
+.vscode
+.idea
+
+# Ignore package manager lock files
+yarn.lock
+package-lock.json
+yarn-error.log
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# .NET specific files
+*.dll

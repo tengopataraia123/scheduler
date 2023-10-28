@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.5.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Users\" />
+    <None Remove="Auth\" />
+    <None Remove="Auth\Roles\" />
+    <None Remove="Admins\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Users\" />
+    <Folder Include="Auth\" />
+    <Folder Include="Auth\Roles\" />
+  </ItemGroup>
+</Project>
