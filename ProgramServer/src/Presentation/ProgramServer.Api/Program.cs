@@ -42,6 +42,8 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
 builder.Services.AddSingleton<IRequestDecryptService, RequestDecryptService>();
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -134,8 +136,9 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors();
-
+#if !DEBUG
 app.UseMiddleware<ExceptionMiddleware>();
+#endif
 
 //app.UseHttpsRedirection();
 app.UseWhen(o => o.Request.Headers.Keys.Contains("RsaEncrypted"), app => app.UseMiddleware<RequestDecryptionMiddleware>());
