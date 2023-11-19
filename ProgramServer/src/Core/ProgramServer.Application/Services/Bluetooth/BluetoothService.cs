@@ -25,11 +25,12 @@ public class BluetoothService : IBluetoothService
         var attendances = await attendancesQuery.GroupBy(o => o.attendance.Id)
             .Select(o => new AttendanceModel
             {
-                EventId = o.First().attendance.Id,
+                EventId = o.First().attendance.EventId,
                 UserId = o.First().attendance.UserId,
                 BluetoothCodes = o.Select(x => new BluetoothCodeModel
                 {
-                    Code = x.bluetoothCode.Code
+                    Code = x.bluetoothCode.Code,
+                    ActivateTime = x.bluetoothCode.ActivationTime
                 })
             }).ToListAsync();
 

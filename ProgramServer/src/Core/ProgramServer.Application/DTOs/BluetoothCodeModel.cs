@@ -10,5 +10,6 @@ namespace ProgramServer.Application.DTOs
     {
         public string Code { get; set; }
         public int Count { get; set; }
+        public DateTime ActivateTime { get; set; }
     }
 }
