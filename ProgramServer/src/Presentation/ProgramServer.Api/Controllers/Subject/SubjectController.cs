@@ -18,28 +18,6 @@ namespace ProgramServer.Api.Controllers.Subject
         {
             _subjectService = subjectService;
         }
-        
-        [HttpGet("GetSubjects/{userId}")]
-        public async Task<IActionResult> GetSubjectsByUserId(int userId)
-        {
-            var subjects = await _subjectService.GetSubjectsByUserId(userId);
-
-            return Ok(subjects);
-        }
-
-        [HttpGet("Find/{id}")]
-        public async Task<ActionResult<SubjectModel>> FindSubject([FromRoute] int id)
-        {
-            var subject = await _subjectService.FindSubject(id);
-            return Ok(subject);
-        }
-
-        [HttpGet("GetAllSubjects")]
-        public async Task<ActionResult<List<SubjectModel>>> GetAllSubjects()
-        {
-            var subjects = await _subjectService.GetAllSubjects();
-            return Ok(subjects);
-        }
 
         [HttpPost("Create")]
         public async Task<ActionResult> CreateSubject([FromBody] SubjectCreateModel subjectModel)
@@ -48,19 +26,41 @@ namespace ProgramServer.Api.Controllers.Subject
             return Ok();
         }
 
-        [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult> DeleteSubject([FromRoute] int id)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddSubjectUsers([FromBody] List<SubjectUserModel> subjectUsers)
         {
-            await _subjectService.DeleteSubject(id);
+            await _subjectService.AddSubjectUsers(subjectUsers);
             return Ok();
         }
 
-        [HttpPost("[action]")]
-        public async Task<IActionResult> AddSubjectUser([FromBody] SubjectUserModel subjectUser)
+        [HttpGet("GetSubjects/{userId}")]
+        public async Task<IActionResult> GetSubjectsByUserId(int userId)
         {
-            await _subjectService.AddSubjectUser(subjectUser);
-            return Ok();
+            var subjects = await _subjectService.GetSubjectsByUserId(userId);
+
+            return Ok(subjects);
         }
+
+        [HttpGet("GetAllSubjects")]
+        public async Task<ActionResult<List<SubjectCreateModel>>> GetAllSubjects()
+        {
+            var subjects = await _subjectService.GetAllSubjects();
+            return Ok(subjects);
+        }
+
+        //[HttpGet("Find/{id}")]
+        //public async Task<ActionResult<SubjectModel>> FindSubject([FromRoute] int id)
+        //{
+        //    var subject = await _subjectService.FindSubject(id);
+        //    return Ok(subject);
+        //}
+
+        //[HttpDelete("Delete/{id}")]
+        //public async Task<ActionResult> DeleteSubject([FromRoute] int id)
+        //{
+        //    await _subjectService.DeleteSubject(id);
+        //    return Ok();
+        //}
     }
 }
 

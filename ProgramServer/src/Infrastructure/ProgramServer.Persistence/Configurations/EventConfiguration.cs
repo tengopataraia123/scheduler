@@ -10,6 +10,7 @@ namespace ProgramServer.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Event> builder)
         {
             builder.HasKey(e => e.Id);
+            builder.Property(e => e.Id).ValueGeneratedOnAdd();
 
             builder.HasOne(e => e.Subject)
                 .WithMany(s => s.Events)

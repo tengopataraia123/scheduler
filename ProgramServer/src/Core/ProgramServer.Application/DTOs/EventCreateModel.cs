@@ -26,6 +26,5 @@ namespace ProgramServer.Application.DTOs
                 .NotEmpty().WithMessage("Enter the end date");
 
         }
-
     }
 }

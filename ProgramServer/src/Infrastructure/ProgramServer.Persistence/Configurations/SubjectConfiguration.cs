@@ -13,6 +13,7 @@ namespace ProgramServer.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Subject> builder)
         {
             builder.HasKey(s => s.Id);
+            builder.Property(e => e.Id).ValueGeneratedOnAdd();
 
             builder.Property(s => s.Name).HasMaxLength(250);
 

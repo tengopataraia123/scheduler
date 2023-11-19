@@ -5,10 +5,12 @@ namespace ProgramServer.Application.Services.Events
 {
     public interface IEventService
     {
-        Task<EventModel> FindEvent(int id);
-        Task<List<EventModel>> GetAllEvents();
-        Task CreateEvent(EventCreateModel user);
-        Task DeleteEvent(int id);
+        Task Add(EventCreateModel eventModel);
+        Task AddEvents(List<EventCreateModel> events);
+        Task<List<EventCreateModel>> GetAll();
+        
+        //Task<EventModel> FindEvent(int id);
+        //Task DeleteEvent(int id);
     }
 }
 

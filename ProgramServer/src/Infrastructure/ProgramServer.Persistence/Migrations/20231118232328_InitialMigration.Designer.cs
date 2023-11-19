@@ -12,8 +12,8 @@ using ProgramServer.Persistence.Data;
 namespace ProgramServer.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231025201645_Initial")]
-    partial class Initial
+    [Migration("20231118232328_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,7 +104,10 @@ namespace ProgramServer.Persistence.Migrations
             modelBuilder.Entity("ProgramServer.Domain.Roles.Role", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsBroadcaster")
                         .HasColumnType("boolean");

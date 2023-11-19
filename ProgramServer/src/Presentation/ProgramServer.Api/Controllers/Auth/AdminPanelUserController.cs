@@ -7,11 +7,11 @@ namespace ProgramServer.Api.Controllers.Auth
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserLoginController : ControllerBase
+    public class AdminPanelUserController : ControllerBase
     {
         public readonly IUserLoginService _userLoginService;
 
-        public UserLoginController(IUserLoginService userLoginService)
+        public AdminPanelUserController(IUserLoginService userLoginService)
         {
             _userLoginService = userLoginService;
         }

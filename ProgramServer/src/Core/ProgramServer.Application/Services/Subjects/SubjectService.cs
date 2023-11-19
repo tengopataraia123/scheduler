@@ -28,37 +28,6 @@ namespace ProgramServer.Application.Services.Subjects
             _mapper = mapper;
         }
 
-        public async Task<SubjectModel> FindSubject(int id)
-        {
-            var subject = await _subjectRepository.GetAll().Where(x=>x.Id == id).FirstOrDefaultAsync();
-
-            if (subject == null)
-                throw new NotFoundException(nameof(Subject), id);
-            return _mapper.Map<SubjectModel>(subject);
-        }
-
-        public async Task<List<SubjectModel>> GetSubjectsByUserId(int userId)
-        {
-            var subjects = await _subjectRepository.GetAll().Where(x => x.SubjectUsers.Any(s => s.UserId == userId))
-                .Include(s => s.Events)
-                .Include(a=>a.SubjectUsers)
-                .ToListAsync();
-
-            if (subjects == null)
-            {
-                throw new NotFoundException(nameof(Subject), userId);
-            }
-
-            return _mapper.Map<List<SubjectModel>>(subjects);
-        }
-
-
-        public async Task<List<SubjectModel>> GetAllSubjects()
-        {
-            var allusers = await _subjectRepository.GetAll().ToListAsync();
-            return _mapper.Map<List<SubjectModel>>(allusers);
-        }
-
         public async Task CreateSubject(SubjectCreateModel subjectModel)
         {
             var validator = new SubjectCreateModelValidator();
@@ -74,18 +43,51 @@ namespace ProgramServer.Application.Services.Subjects
             await _subjectRepository.SaveAsync();
         }
 
-        public async Task DeleteSubject(int id)
+        public async Task AddSubjectUsers(List<SubjectUserModel> subjectUsers)
         {
-            await _subjectRepository.Delete(o=>o.Id  == id);
+            foreach (var subjectUser in subjectUsers)
+            {
+                var entity = _mapper.Map<SubjectUser>(subjectUser);
+
+                _subjectUserRepository.Add(entity);
+                await _subjectUserRepository.SaveAsync();
+            }
         }
 
-        public async Task AddSubjectUser(SubjectUserModel subjectUser)
+        public async Task<List<SubjectCreateModel>> GetSubjectsByUserId(int userId)
         {
-            var entity = _mapper.Map<SubjectUser>(subjectUser);
+            var subjects = await _subjectRepository.GetAll().Where(x => x.SubjectUsers.Any(s => s.UserId == userId))
+                .Include(s => s.Events)
+                .Include(a => a.SubjectUsers)
+                .ToListAsync();
 
-            _subjectUserRepository.Add(entity);
-            await _subjectUserRepository.SaveAsync();
+            if (subjects == null)
+            {
+                throw new NotFoundException(nameof(Subject), userId);
+            }
+
+            return _mapper.Map<List<SubjectCreateModel>>(subjects);
         }
+
+        public async Task<List<SubjectCreateModel>> GetAllSubjects()
+        {
+            var allusers = await _subjectRepository.GetAll().ToListAsync();
+            return _mapper.Map<List<SubjectCreateModel>>(allusers);
+        }
+
+        //public async Task<SubjectModel> FindSubject(int id)
+        //{
+        //    var subject = await _subjectRepository.GetAll().Where(x=>x.Id == id).FirstOrDefaultAsync();
+
+        //    if (subject == null)
+        //        throw new NotFoundException(nameof(Subject), id);
+        //    return _mapper.Map<SubjectModel>(subject);
+        //}
+
+        //public async Task DeleteSubject(int id)
+        //{
+        //    await _subjectRepository.Delete(o=>o.Id  == id);
+        //}
     }
 }
 

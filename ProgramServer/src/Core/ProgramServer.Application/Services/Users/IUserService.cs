@@ -5,9 +5,10 @@ namespace ProgramServer.Application.Services.Users
 {
     public interface IUserService
     {
-        Task<UserModel> FindUser(int id);
-        Task<List<UserModel>> GetAllUsers();
-        Task DeleteUser(int id);
+        Task Add(UserCreateModel user);
+        Task AddUsers(List<UserCreateModel> users);
+        Task<List<UserCreateModel>> GetAll();
+        //Task Delete(int id);
     }
 }
 

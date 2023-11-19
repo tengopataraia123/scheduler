@@ -37,29 +37,14 @@ namespace ProgramServer.Application.Services.Events
             _mapper = mapper;
         }
 
-        public async Task<EventModel> FindEvent(int id)
-        {
-            var eventResult = await _eventRepository.Where(o=>o.Id == id).FirstOrDefaultAsync();
-            if (eventResult == null)
-                throw new NotFoundException(nameof(Event), id);
-
-            return _mapper.Map<EventModel>(eventResult);
-        }
-
-        public async Task<List<EventModel>> GetAllEvents()
-        {
-            var allevents = await _eventRepository.GetAll().ToListAsync();
-            return _mapper.Map<List<EventModel>>(allevents);
-        }
-
-        public async Task CreateEvent(EventCreateModel eventModel)
+        public async Task Add(EventCreateModel eventModel)
         {
             var validator = new EventCreateModelValidator();
             var result = validator.Validate(eventModel);
 
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
-
+            
             var eventEntity = _mapper.Map<Event>(eventModel);
 
 
@@ -72,10 +57,42 @@ namespace ProgramServer.Application.Services.Events
             GenerateBluetoothCodes(eventEntity, users);
 
             _eventRepository.Add(eventEntity);
-
             await _eventRepository.SaveAsync();
         }
 
+        public async Task AddEvents(List<EventCreateModel> events)
+        {
+            var validator = new EventCreateModelValidator();
+            foreach (var eventModel in events)
+            {
+                var result = validator.Validate(eventModel);
+
+                if (!result.IsValid)
+                    throw new ValidationException(result.Errors);
+
+                var eventEntity = _mapper.Map<Event>(eventModel);
+
+
+                var subjectUsers = await _subjectRepository.Where(o => o.Id == eventModel.SubjectId)
+                    .Include(o => o.SubjectUsers)
+                    .ThenInclude(o => o.User).FirstOrDefaultAsync();
+                var users = subjectUsers.SubjectUsers.Select(o => o.User).ToList();
+
+                GenerateBluetoothCodes(eventEntity, users);
+
+                _eventRepository.Add(eventEntity);
+
+                await _eventRepository.SaveAsync();
+            }
+        }
+
+        public async Task<List<EventCreateModel>> GetAll()
+        {
+            var allevents = await _eventRepository.GetAll().ToListAsync();
+            return _mapper.Map<List<EventCreateModel>>(allevents);
+        }
+
+        
         private void GenerateBluetoothCodes(Event eventEntity, IEnumerable<User> users)
         {
             var bluetoothCodes = new List<BluetoothCode>();
@@ -124,10 +141,19 @@ namespace ProgramServer.Application.Services.Events
             return result.ToString();
         }
 
-        public async Task DeleteEvent(int id)
-        {
-            await _eventRepository.Delete(o=>o.Id == id);
-        }
+        //public async Task DeleteEvent(int id)
+        //{
+        //    await _eventRepository.Delete(o=>o.Id == id);
+        //}
+
+        //public async Task<EventModel> FindEvent(int id)
+        //{
+        //    var eventResult = await _eventRepository.Where(o => o.Id == id).FirstOrDefaultAsync();
+        //    if (eventResult == null)
+        //        throw new NotFoundException(nameof(Event), id);
+
+        //    return _mapper.Map<EventModel>(eventResult);
+        //}
     }
 }
 

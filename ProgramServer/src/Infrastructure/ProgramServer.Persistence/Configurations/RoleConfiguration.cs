@@ -10,7 +10,7 @@ namespace ProgramServer.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Role> builder)
         {
             builder.HasKey(o=>o.Id);
-            builder.Property(o => o.Id).ValueGeneratedNever();
+            builder.Property(e => e.Id).ValueGeneratedOnAdd();
 
             builder.Property(r => r.RoleName)
                 .HasMaxLength(50)

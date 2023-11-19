@@ -1,14 +1,11 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using ProgramServer.Application.Repository;
 using ProgramServer.Domain.Users;
-using System.Linq.Expressions;
-using ProgramServer.Application.Exceptions;
-using System.Runtime.ConstrainedExecution;
 using ProgramServer.Application.DTOs;
 using Microsoft.EntityFrameworkCore;
 using ProgramServer.Domain.Attendances;
 using ProgramServer.Domain.Attandances;
+using FluentValidation;
 
 namespace ProgramServer.Application.Services.Users
 {
@@ -30,24 +27,49 @@ namespace ProgramServer.Application.Services.Users
             _mapper = mapper;
         }
 
-        public async Task<UserModel> FindUser(int id)
+        public async Task Add(UserCreateModel userModel)
         {
-            var user = await _userRepository.Where(o=>o.Id == id).FirstOrDefaultAsync();
-            if (user == null)
-                throw new NotFoundException(nameof(User), id);
-            return _mapper.Map<UserModel>(user);
+            var validator = new UserCreateModelValidator();
+            var result = validator.Validate(userModel);
+
+            if (!result.IsValid)
+                throw new ValidationException(result.Errors);
+
+            userModel.Password = " ";
+            var user = _mapper.Map<User>(userModel);
+
+            _userRepository.Add(user);
+
+            await _userRepository.SaveAsync();
         }
 
-        public async Task<List<UserModel>> GetAllUsers()
+        public async Task AddUsers(List<UserCreateModel> users)
+        {
+            foreach (var userModel in users)
+            {
+                var validator = new UserCreateModelValidator();
+                var result = validator.Validate(userModel);
+
+                if (!result.IsValid)
+                    throw new ValidationException(result.Errors);
+                userModel.Password = " ";
+                var user = _mapper.Map<User>(userModel);
+
+                _userRepository.Add(user);
+                await _userRepository.SaveAsync();
+            }
+        }
+
+        public async Task<List<UserCreateModel>> GetAll()
         {
             var allusers = await _userRepository.GetAll().ToListAsync();
-            return _mapper.Map<List<UserModel>>(allusers);
+            return _mapper.Map<List<UserCreateModel>>(allusers);
         }
 
-        public async Task DeleteUser(int id)
-        {
-            await _userRepository.Delete(o=>o.Id == id);
-        }
+        //public async Task Delete(int id)
+        //{
+        //    await _userRepository.Delete(o => o.Id == id);
+        //}
 
     }
 }

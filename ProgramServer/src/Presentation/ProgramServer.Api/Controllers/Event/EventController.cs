@@ -18,33 +18,40 @@ namespace ProgramServer.Api.Controllers.Event
             _eventService = eventService;
         }
 
-        [HttpGet("Find/{id}")]
-        public async Task<ActionResult<EventModel>> FindEvent([FromRoute] int id)
+        [HttpPost("Add")]
+        public async Task<ActionResult> Add([FromBody] EventCreateModel eventModel)
         {
-            var eventResult = await _eventService.FindEvent(id);
-            return Ok(eventResult);
+            await _eventService.Add(eventModel);
+            return Ok();
         }
 
-        [HttpGet("GetAllEvents")]
-        public async Task<ActionResult<List<EventModel>>> GetAllEvents()
+        [HttpPost("AddEvents")]
+        public async Task<ActionResult> AddEvents([FromBody] List<EventCreateModel> events)
         {
-            var events = await _eventService.GetAllEvents();
+            await _eventService.AddEvents(events);
+            return Ok();
+        }
+
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<List<EventCreateModel>>> GetAll()
+        {
+            var events = await _eventService.GetAll();
             return Ok(events);
         }
 
-        [HttpPost("Create")]
-        public async Task<ActionResult> CreateEvent([FromBody] EventCreateModel eventModel)
-        {
-            await _eventService.CreateEvent(eventModel);
-            return Ok();
-        }
+        //[HttpGet("Find/{id}")]
+        //public async Task<ActionResult<EventModel>> FindEvent([FromRoute] int id)
+        //{
+        //    var eventResult = await _eventService.FindEvent(id);
+        //    return Ok(eventResult);
+        //}
 
-        [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult> DeleteEvent([FromRoute] int id)
-        {
-            await _eventService.DeleteEvent(id);
-            return Ok();
-        }
+        //[HttpDelete("Delete/{id}")]
+        //public async Task<ActionResult> DeleteEvent([FromRoute] int id)
+        //{
+        //    await _eventService.DeleteEvent(id);
+        //    return Ok();
+        //}
     }
 }
 

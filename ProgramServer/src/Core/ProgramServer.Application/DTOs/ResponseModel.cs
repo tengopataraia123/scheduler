@@ -5,7 +5,6 @@ namespace ProgramServer.Application.DTOs
 {
     public class ResponseModel
     {
-        public int Id { get; set; }
         public string Subject { get; set; }
         public string UserMail { get; set; }
         public int SurveyId { get; set; }
