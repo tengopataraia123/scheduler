@@ -8,7 +8,7 @@ namespace ProgramServer.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestController : ControllerBase
+    public class TestController : ApiControllerBase
     {
         private readonly IRequestDecryptService service;
         public TestController(IRequestDecryptService service)
@@ -28,6 +28,12 @@ namespace ProgramServer.Api.Controllers
             var result = crypto.Encrypt(Encoding.Unicode.GetBytes(message), true);
 
             return Ok(Encoding.Unicode.GetString(result));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> TestAuth()
+        {
+            return Ok();
         }
     }
 }

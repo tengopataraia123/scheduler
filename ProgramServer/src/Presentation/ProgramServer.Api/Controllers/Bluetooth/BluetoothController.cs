@@ -1,16 +1,15 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProgramServer.Application.Common.Models;
 using ProgramServer.Application.Services.Bluetooth;
 
 namespace ProgramServer.Api.Controllers.Bluetooth;
 
-//[Authorize]
 [Route("[controller]")]
-public class BluetoothController : ControllerBase
+public class BluetoothController : ApiControllerBase
 {
 
-    private readonly int _userId;
     private readonly IBluetoothService _bluetoothService;
 
     public BluetoothController(IBluetoothService bluetoothService)
@@ -19,16 +18,14 @@ public class BluetoothController : ControllerBase
         _bluetoothService = bluetoothService;
     }
     
-    //[Authorize]
     [HttpGet("[action]")]
-    public async Task<IActionResult> GetBluetoothCodes(int userId)
+    public async Task<IActionResult> GetBluetoothCodes()
     {
         //var result = await _bluetoothService.GetBluetoothCodes(_userId);
-        var result = await _bluetoothService.GetBluetoothCodes(userId);
+        var result = await _bluetoothService.GetBluetoothCodes(CurrentUser.Id);
         return Ok(result);
     }
     
-    //[Authorize]
     [HttpPost("[action]")]
     public async Task<IActionResult> ScannedBluetoothCodes([FromBody] List<string> codes)
     {

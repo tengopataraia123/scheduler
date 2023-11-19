@@ -10,7 +10,7 @@ namespace ProgramServer.Api.Controllers.Subject
 {
     [ApiController]
     [Route("[controller]")]
-    public class SubjectController : ControllerBase
+    public class SubjectController : ApiControllerBase
     {
         private readonly ISubjectService _subjectService;
 
@@ -33,10 +33,10 @@ namespace ProgramServer.Api.Controllers.Subject
             return Ok();
         }
 
-        [HttpGet("GetSubjects/{userId}")]
-        public async Task<IActionResult> GetSubjectsByUserId(int userId)
+        [HttpGet("GetSubjects")]
+        public async Task<IActionResult> GetSubjectsByUser()
         {
-            var subjects = await _subjectService.GetSubjectsByUserId(userId);
+            var subjects = await _subjectService.GetSubjectsByUserId(CurrentUser.Id);
 
             return Ok(subjects);
         }

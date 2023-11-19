@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using ProgramServer.Application.Auth.Common;
 using ProgramServer.Application.Common.Mappings;
 using ProgramServer.Application.Middlewares;
 using ProgramServer.Application.Repository;
@@ -14,12 +13,13 @@ using ProgramServer.Application.Services.Roles;
 using ProgramServer.Application.Services.Subjects;
 using ProgramServer.Application.Services.Surveys;
 using ProgramServer.Application.Services.Users;
-using ProgramServer.Application.Settings;
 using ProgramServer.Persistence.Data;
 using ProgramServer.Persistence.Repository;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,13 +39,10 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
 builder.Services.AddScoped<IResponseService, ResponseService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
-builder.Services.AddSingleton<IAppSettings>(sp => sp.GetRequiredService<IOptions<AppSettings>>().Value);
 
-builder.Services.AddScoped<IUserLoginService, UserLoginService>();
-builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddSingleton<IRequestDecryptService, RequestDecryptService>();
+
+builder.Services.AddMemoryCache();
 
 builder.Services.AddCors(options =>
 {
@@ -68,26 +65,24 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-                .AddJwtBearer(cfg =>
-                {
-                    cfg.RequireHttpsMetadata = true;
-                    cfg.SaveToken = true;
-                    cfg.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Secret").Value)),
-                        ValidateAudience = false,
-                        ValidateIssuer = false,
-                        ValidateLifetime = false,
-                        RequireExpirationTime = false,
-                        ClockSkew = TimeSpan.Zero,
-                        ValidateIssuerSigningKey = true
-                    };
-                });
+builder.Services.AddAuthentication()
+    .AddJwtBearer("Bearer",optons =>
+    {
+        optons.Authority = "https://accounts.google.com";
+        optons.ConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+            $"{optons.Authority}/.well-known/openid-configuration",
+            new OpenIdConnectConfigurationRetriever(), new HttpDocumentRetriever());
+        optons.RequireHttpsMetadata = false;
+        optons.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = "https://accounts.google.com",
+            ValidateIssuer = true,
+            ValidAlgorithms = new[] { "RS256" },
+            ValidAudience = "817166273814-css9qgkp0sgn8bpci0s24i7j9sonl7v2.apps.googleusercontent.com",
+            ValidateAudience = true,
+            ValidateLifetime = false,
+        };
+    });
 #region Swagger Dependencies
 
 builder.Services.AddSwaggerGen(swagger =>
@@ -99,29 +94,39 @@ builder.Services.AddSwaggerGen(swagger =>
         Description = "ASP.NET Core Web API"
     });
     // To Enable authorization using Swagger (JWT)  
-    swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    swagger.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme()
     {
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
         In = ParameterLocation.Header,
+        Flows = new OpenApiOAuthFlows
+        {
+            AuthorizationCode = new OpenApiOAuthFlow
+            {
+                AuthorizationUrl = new Uri("https://accounts.google.com/o/oauth2/auth"),
+                TokenUrl = new Uri("https://oauth2.googleapis.com/token"),
+                Scopes = new Dictionary<string, string>
+                {
+                    {"email","Email"}
+                }
+            }
+        },
         Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
     });
     swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
                 {
-                    {
-                          new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                }
-                            },
-                            new string[] {}
-                    }
-                });
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "OAuth2"
+                }
+            },
+            new string[] {"email"}
+        }
+    });
 
 });
 #endregion
@@ -131,12 +136,14 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors();
-
+#if !DEBUG
 app.UseMiddleware<ExceptionMiddleware>();
+#endif
 
 //app.UseHttpsRedirection();
 app.UseWhen(o => o.Request.Headers.Keys.Contains("RsaEncrypted"), app => app.UseMiddleware<RequestDecryptionMiddleware>());
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
