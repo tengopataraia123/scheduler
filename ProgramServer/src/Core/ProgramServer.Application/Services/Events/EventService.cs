@@ -20,20 +20,14 @@ namespace ProgramServer.Application.Services.Events
     { 
         private readonly IRepository<Event> _eventRepository;
         private readonly IRepository<Subject> _subjectRepository;
-        private readonly IRepository<BluetoothCode> _bluetoothCodeRepository;
-        private readonly IRepository<Attendance> _attendanceRepository;
         private readonly IMapper _mapper;
 
         public EventService(IRepository<Event> eventRepository,
             IRepository<Subject> subjectRepository,
-            IRepository<BluetoothCode> bluetoothCodeRepository,
-            IRepository<Attendance> attendanceRepository,
             IMapper mapper)
         {
             _eventRepository = eventRepository;
             _subjectRepository = subjectRepository;
-            _bluetoothCodeRepository = bluetoothCodeRepository;
-            _attendanceRepository = attendanceRepository;
             _mapper = mapper;
         }
 
@@ -54,8 +48,6 @@ namespace ProgramServer.Application.Services.Events
 
             var users = subjectUsers.SubjectUsers.Select(o => o.User).ToList();
 
-            GenerateBluetoothCodes(eventEntity, users);
-
             _eventRepository.Add(eventEntity);
             await _eventRepository.SaveAsync();
         }
@@ -72,14 +64,6 @@ namespace ProgramServer.Application.Services.Events
 
                 var eventEntity = _mapper.Map<Event>(eventModel);
 
-
-                var subjectUsers = await _subjectRepository.Where(o => o.Id == eventModel.SubjectId)
-                    .Include(o => o.SubjectUsers)
-                    .ThenInclude(o => o.User).FirstOrDefaultAsync();
-                var users = subjectUsers.SubjectUsers.Select(o => o.User).ToList();
-
-                GenerateBluetoothCodes(eventEntity, users);
-
                 _eventRepository.Add(eventEntity);
 
                 await _eventRepository.SaveAsync();
@@ -93,53 +77,6 @@ namespace ProgramServer.Application.Services.Events
         }
 
         
-        private void GenerateBluetoothCodes(Event eventEntity, IEnumerable<User> users)
-        {
-            var bluetoothCodes = new List<BluetoothCode>();
-
-            foreach(var user in users)
-            {
-                var attendance = new Attendance()
-                {
-                    Event = eventEntity,
-                    User = user
-                };
-
-                for (var time = eventEntity.StartDate; time <= eventEntity.EndDate;time =  time.AddMinutes(20)) {
-                    var code = GenerateUniqueCode(bluetoothCodes);
-                    bluetoothCodes.Add(new BluetoothCode
-                    {
-                        Code = code,
-                        ActivationTime = time,
-                        Attendance = attendance
-                    });
-                }
-
-                _attendanceRepository.Add(attendance);
-            }
-            _bluetoothCodeRepository.AddRange(bluetoothCodes);
-        }
-
-        private string GenerateUniqueCode(List<BluetoothCode> bluetoothCodes,int counter = 0)
-        {
-            if (counter == 10)
-                throw new Exception("Can't Generate bluetooth codes");
-
-            char[] symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToArray();
-
-            var result = new StringBuilder(5);
-
-            for (var i = 0; i < 5; i++)
-            {
-                var index = RandomNumberGenerator.GetInt32(symbols.Length);
-                result.Append(symbols[index]);
-            }
-
-            if(bluetoothCodes.Any(o=>o.Code == result.ToString()))
-                return GenerateUniqueCode(bluetoothCodes,counter++);
-
-            return result.ToString();
-        }
 
         //public async Task DeleteEvent(int id)
         //{
