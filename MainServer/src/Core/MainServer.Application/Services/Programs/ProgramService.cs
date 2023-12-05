@@ -149,47 +149,30 @@ namespace MainServer.Application.Services.Programs
             await _programRepository.UpdateAsync(program);
         }
 
-        public async Task Block(int id, UserInfo userInfo)
+        public async Task Block(int id)
         {
             var validator = new ProgramValidator();
             var program = await _programRepository.GetByIdAsync(id);
             if (program == null)
                 throw new NotFoundException(nameof(ProgramEntity), id);
 
-            var user = await _userService.GetUserById(userInfo.Id);
-            if (userInfo.RoleName.Equals("Admin"))
-            {
-                program.IsActive = false;
-                program.IsBlocked = true;
+            program.IsActive = false;
+            program.IsBlocked = true;
 
-                await _programRepository.UpdateAsync(program);
-            }
-            else
-            {
-                throw new BadRequestException("Only Admin can block program");
-            }
-
-            
+            await _programRepository.UpdateAsync(program);
         }
 
-        public async Task Unblock(int id, UserInfo userInfo)
+        public async Task Unblock(int id)
         {
             var validator = new ProgramValidator();
             var program = await _programRepository.GetByIdAsync(id);
             if (program == null)
                 throw new NotFoundException(nameof(ProgramEntity), id);
 
-            if (userInfo.RoleName.Equals("Admin"))
-            {
-                program.IsActive = false;
-                program.IsBlocked = false;
+            program.IsActive = false;
+            program.IsBlocked = false;
 
-                await _programRepository.UpdateAsync(program);
-            }
-            else
-            {
-                throw new BadRequestException("Only Admin can unblock program");
-            }
+            await _programRepository.UpdateAsync(program);
         }
 
         public async Task<ProgramPrivateKeyOutDTO> GenerateNewKeyPair(int programId)

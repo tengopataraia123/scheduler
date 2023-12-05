@@ -10,9 +10,6 @@
     <None Remove="Migrations\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Core\MainServer.Application\MainServer.Application.csproj" />
     <ProjectReference Include="..\..\Core\MainServer.Domain\MainServer.Domain.csproj" />
   </ItemGroup>
@@ -21,5 +18,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
   </ItemGroup>
 </Project>
