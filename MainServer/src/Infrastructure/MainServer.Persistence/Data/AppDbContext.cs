@@ -22,7 +22,7 @@ namespace MainServer.Persistence.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            ModelBuilderExtension.Seed(builder);
+            //ModelBuilderExtension.Seed(builder);
             base.OnModelCreating(builder);
         }
     }

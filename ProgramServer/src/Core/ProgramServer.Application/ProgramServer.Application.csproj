@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.64.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -26,5 +27,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Google.Apis.Auth">
+      <HintPath>..\..\..\..\..\..\.nuget\packages\google.apis.auth\1.64.0\lib\netstandard2.0\Google.Apis.Auth.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

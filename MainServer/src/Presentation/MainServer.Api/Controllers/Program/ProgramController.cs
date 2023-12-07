@@ -116,7 +116,7 @@ namespace MainServer.Api.Controllers.Program
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> BlockProgram([FromRoute] int id)
         {
-            await _programService.Block(id, UserInfo);
+            await _programService.Block(id);
             return Ok();
         }
 
@@ -124,7 +124,7 @@ namespace MainServer.Api.Controllers.Program
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UnblockProgram([FromRoute] int id)
         {
-            await _programService.Unblock(id, UserInfo);
+            await _programService.Unblock(id);
             return Ok();
         }
     }
