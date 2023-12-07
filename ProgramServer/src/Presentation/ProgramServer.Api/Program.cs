@@ -58,17 +58,26 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 
 
-builder.Services.AddAuthentication()
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer("Bearer",optons =>
     {
-        optons.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidIssuer = "http://main.scheduler.ge",
-            ValidateIssuer = true,
-            ValidAlgorithms = new[] { "RS256" },
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Secret").Value)),
-            ValidateLifetime = false,
-        };
+        var value = builder.Configuration.GetSection("AppSettings:Secret").Value;
+        if (value != null)
+            optons.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(value)),
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidateAudience = false,
+                RequireExpirationTime = false
+            };
     });
 #region Swagger Dependencies
 
