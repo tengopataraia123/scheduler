@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProgramServer.Application.DTOs;
 using ProgramServer.Application.Services.Subjects;
+using Microsoft.AspNetCore.Authorization;
+using ProgramServer.Domain.Roles;
 
 namespace ProgramServer.Api.Controllers.Subject
 {
@@ -20,6 +22,7 @@ namespace ProgramServer.Api.Controllers.Subject
         }
 
         [HttpPost("Create")]
+        [Authorize(Roles = "admin,coordinator")]
         public async Task<ActionResult> CreateSubject([FromBody] SubjectCreateModel subjectModel)
         {
             await _subjectService.CreateSubject(subjectModel);
@@ -27,6 +30,7 @@ namespace ProgramServer.Api.Controllers.Subject
         }
 
         [HttpPost("[action]")]
+        [Authorize(Roles = "admin,coordinator")]
         public async Task<IActionResult> AddSubjectUsers([FromBody] List<SubjectUserModel> subjectUsers)
         {
             await _subjectService.AddSubjectUsers(subjectUsers);

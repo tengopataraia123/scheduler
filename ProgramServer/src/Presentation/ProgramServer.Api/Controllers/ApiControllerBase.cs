@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using ProgramServer.Application.Repository;
+using ProgramServer.Domain.Roles;
 
 namespace ProgramServer.Api.Controllers
 {
@@ -18,14 +19,16 @@ namespace ProgramServer.Api.Controllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var c = context.Controller as ApiControllerBase;
-            var emailClaim = c.User.Claims.FirstOrDefault(o => o.Type == ClaimTypes.Email);
+            var email = c.User.Claims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value;
             var userId = Convert.ToInt32(c.User.Claims.FirstOrDefault(o=>o.Type == ClaimTypes.NameIdentifier)?.Value);
             var role = c.User.Claims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value ?? string.Empty;
+
             
             c.CurrentUser = new UserInfo()
             {
                 Id = userId,
-                RoleName = role
+                RoleName = role,
+                Email = email
             };
         }
     }

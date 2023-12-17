@@ -15,6 +15,7 @@ public class AuthService : IAuthService
     private readonly IRepository<User> _userRepository;
     private readonly string androidClientId;
     private readonly string iosClientId;
+    private readonly string webClientId;
     private readonly string _secret;
     
     public AuthService(IRepository<User> userRepository,
@@ -23,6 +24,7 @@ public class AuthService : IAuthService
         _userRepository = userRepository;
         androidClientId = configuration.GetSection("AppSettings")?.GetValue<string>("AndroidClientId") ?? string.Empty;
         iosClientId = configuration.GetSection("AppSettings")?.GetValue<string>("IosClientId") ?? string.Empty;
+        webClientId = configuration.GetSection("AppSettings")?.GetValue<string>("WebClientId") ?? string.Empty;
         _secret = configuration.GetSection("AppSettings")?.GetValue<string>("Secret") ?? string.Empty;
     }
     public async Task<string> GenerateToken(string idToken)
@@ -30,7 +32,7 @@ public class AuthService : IAuthService
         var googleUser = await GoogleJsonWebSignature.ValidateAsync(idToken,
             new GoogleJsonWebSignature.ValidationSettings()
             {
-                Audience = new string[]{androidClientId,iosClientId}
+                Audience = new string[]{androidClientId,iosClientId,webClientId}
             });
         
         if (googleUser is null)
