@@ -4,8 +4,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Protected from "helpers/ProtectedRoute";
 import { Responses } from "pages/Responses/Responses";
 import { Register } from "pages/Register/Register";
+
 import Home from "pages/Home/Home";
 import SiteWrapper from "components/Wrapper/Wrapper";
+import CreateSchedule from "pages/CreateSchedule/CreateSchedule";
 
 const CustomRoutes = () => {
   return (
@@ -28,6 +30,16 @@ const CustomRoutes = () => {
             <Protected>
               <SiteWrapper>
                 <Responses />
+              </SiteWrapper>
+            </Protected>
+          }
+        />
+        <Route
+          path="/schedule"
+          element={
+            <Protected>
+              <SiteWrapper>
+                <CreateSchedule />
               </SiteWrapper>
             </Protected>
           }

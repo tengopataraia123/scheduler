@@ -6,11 +6,9 @@ import {
   ListItem,
   List,
 } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import PeopleIcon from "@mui/icons-material/People";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FormatListBulleted } from "@mui/icons-material";
+import { FormatListBulleted, Poll, TableChart } from "@mui/icons-material";
 
 const SidebarList = () => {
   const { pathname } = useLocation();
@@ -35,9 +33,9 @@ const SidebarList = () => {
               justifyContent: "center",
             }}
           >
-            <HomeIcon />
+            <Poll />
           </ListItemIcon>
-          <ListItemText primary="მთავარი" sx={{ opacity: open ? 1 : 0 }} />
+          <ListItemText primary="კითხვარი" sx={{ opacity: open ? 1 : 0 }} />
         </ListItemButton>
       </ListItem>
 
@@ -60,12 +58,14 @@ const SidebarList = () => {
           >
             <FormatListBulleted />
           </ListItemIcon>
-          <ListItemText primary="პასუხები" sx={{ opacity: open ? 1 : 0 }} />
+          <ListItemText primary="შედეგები" sx={{ opacity: open ? 1 : 0 }} />
         </ListItemButton>
       </ListItem>
 
       <ListItem disablePadding sx={{ display: "block" }}>
         <ListItemButton
+          onClick={() => navigate("/schedule")}
+          selected={pathname === "/schedule"}
           sx={{
             minHeight: 48,
             justifyContent: open ? "initial" : "center",
@@ -79,12 +79,9 @@ const SidebarList = () => {
               justifyContent: "center",
             }}
           >
-            <PeopleIcon />
+            <TableChart />
           </ListItemIcon>
-          <ListItemText
-            primary="მომხმარებლები"
-            sx={{ opacity: open ? 1 : 0 }}
-          />
+          <ListItemText primary="ცხრილი" sx={{ opacity: open ? 1 : 0 }} />
         </ListItemButton>
       </ListItem>
 
