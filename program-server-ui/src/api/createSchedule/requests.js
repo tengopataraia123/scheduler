@@ -9,3 +9,11 @@ export const postCreateSubject = (subjectData) => {
     },
   });
 };
+
+export const postAddStudent = (studentData) => {
+  return axios.post(`${apiUrl}/SchedulerUser/AddUsers`, studentData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};

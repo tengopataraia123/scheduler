@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import AddSubjectForm from "./AddSubjectForm";
+import AddStudentsForm from "./AddStudentsForm";
 
 const CreateSchedule = () => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -45,7 +46,7 @@ const CreateSchedule = () => {
             input={<OutlinedInput label="Add Option" />}
           >
             <MenuItem value="AddSubject">საგანი</MenuItem>
-            <MenuItem value="AddStudent">სტუდენტები</MenuItem>
+            <MenuItem value="AddStudent">მომხმარებლები</MenuItem>
             <MenuItem value="AddEvent">განრიგი</MenuItem>
             <MenuItem value="AddSubjectStudents">
               საგანი & მომხმარებელი
@@ -55,17 +56,7 @@ const CreateSchedule = () => {
       </Box>
 
       {selectedOption === "AddSubject" && <AddSubjectForm />}
-
-      {selectedOption === "AddStudent" && (
-        <Box component="form" onSubmit={formik.handleSubmit}>
-          {/* Form for AddStudent */}
-          <Typography variant="h6">სტუდენტების რეგისტრაცია</Typography>
-          {/* Add your form fields here */}
-          <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-            დამატება
-          </Button>
-        </Box>
-      )}
+      {selectedOption === "AddStudent" && <AddStudentsForm />}
 
       {selectedOption === "AddEvent" && (
         <Box component="form" onSubmit={formik.handleSubmit}>
