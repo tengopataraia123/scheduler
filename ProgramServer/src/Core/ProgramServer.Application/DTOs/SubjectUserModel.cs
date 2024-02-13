@@ -8,6 +8,8 @@ namespace ProgramServer.Application.DTOs
 {
     public class SubjectUserModel
     {
+        public string SubjectCode { get; set; }
+        public string UserEmail { get; set; }
         public int SubjectId { get; set; }
         public int UserId { get; set; }
     }

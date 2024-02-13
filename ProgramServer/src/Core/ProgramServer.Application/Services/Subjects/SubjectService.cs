@@ -64,6 +64,12 @@ namespace ProgramServer.Application.Services.Subjects
         {
             foreach (var subjectUser in subjectUsers)
             {
+                var subject = await _subjectRepository.Where(s => s.Code == subjectUser.SubjectCode).FirstOrDefaultAsync();
+                subjectUser.SubjectId = subject.Id;
+
+                var userEntity = await _userRepository.Where(u => u.Email == subjectUser.UserEmail).FirstOrDefaultAsync();
+                subjectUser.UserId = userEntity.Id;
+
                 var entity = _mapper.Map<SubjectUser>(subjectUser);
 
                 _subjectUserRepository.Add(entity);
