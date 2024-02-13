@@ -107,15 +107,35 @@ const AddEventsForm = () => {
           render={({ insert, remove }) => (
             <>
               {formik.values.events.map((event, index) => (
-                <Paper key={index} elevation={2} sx={{ p: 2, mb: 2 }}>
+                <Paper
+                  key={index}
+                  elevation={2}
+                  sx={{
+                    p: 7,
+                    mb: 5,
+                    position: "relative",
+                    backgroundColor: "#fafafa",
+                    overflow: "visible",
+                  }}
+                >
                   <Box display="flex" flexDirection="column" gap={2}>
                     <TextField
                       name={`events[${index}].subjectCode`}
                       label="საგნის კოდი"
+                      required
                       value={event.subjectCode}
                       onChange={formik.handleChange}
                       disabled={applySubjectCodeToAll && index !== 0}
                       fullWidth
+                      onBlur={formik.handleBlur}
+                      error={
+                        formik.touched.events?.[index]?.subjectCode &&
+                        Boolean(formik.errors.events?.[index]?.subjectCode)
+                      }
+                      helperText={
+                        formik.touched.events?.[index]?.subjectCode &&
+                        formik.errors.events?.[index]?.subjectCode
+                      }
                     />
                     <TextField
                       name={`events[${index}].startDate`}
@@ -125,6 +145,20 @@ const AddEventsForm = () => {
                       value={event.startDate}
                       onChange={formik.handleChange}
                       fullWidth
+                      onBlur={() =>
+                        formik.setFieldTouched(
+                          `events[${index}].startDate`,
+                          true
+                        )
+                      }
+                      error={
+                        formik.touched.events?.[index]?.startDate &&
+                        Boolean(formik.errors.events?.[index]?.startDate)
+                      }
+                      helperText={
+                        formik.touched.events?.[index]?.startDate &&
+                        formik.errors.events?.[index]?.startDate
+                      }
                     />
                     <TextField
                       name={`events[${index}].endDate`}
@@ -134,14 +168,30 @@ const AddEventsForm = () => {
                       value={event.endDate}
                       onChange={formik.handleChange}
                       fullWidth
+                      onBlur={() =>
+                        formik.setFieldTouched(`events[${index}].endDate`, true)
+                      }
+                      error={
+                        formik.touched.events?.[index]?.endDate &&
+                        Boolean(formik.errors.events?.[index]?.endDate)
+                      }
+                      helperText={
+                        formik.touched.events?.[index]?.endDate &&
+                        formik.errors.events?.[index]?.endDate
+                      }
                     />
                     {index > 0 && (
                       <IconButton
                         aria-label="remove"
                         onClick={() => remove(index)}
-                        sx={{ alignSelf: "flex-end" }}
+                        sx={{
+                          position: "absolute",
+                          top: 4,
+                          right: 4,
+                          color: "error.main",
+                        }}
                       >
-                        <DeleteIcon />
+                        <DeleteIcon fontSize="large" />
                       </IconButton>
                     )}
                   </Box>
