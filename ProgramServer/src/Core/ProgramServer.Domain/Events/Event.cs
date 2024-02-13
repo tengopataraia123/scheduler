@@ -9,7 +9,7 @@ namespace ProgramServer.Domain.Events
     {
         public int SubjectId { get; set; }
 
-        public Subject Subject { get; set; }
+        //public Subject Subject { get; set; }
 
         public DateTime StartDate { get; set; }
 

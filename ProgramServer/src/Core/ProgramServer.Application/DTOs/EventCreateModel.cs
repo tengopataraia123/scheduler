@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace ProgramServer.Application.DTOs
 {
     public class EventCreateModel
     {
+        public string SubjectCode { get; set; }
+        [JsonIgnore]
         public int SubjectId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

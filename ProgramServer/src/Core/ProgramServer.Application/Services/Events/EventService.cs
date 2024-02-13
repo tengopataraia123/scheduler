@@ -39,10 +39,16 @@ namespace ProgramServer.Application.Services.Events
             if (!result.IsValid)
                 throw new ValidationException(result.Errors);
             
-            var eventEntity = _mapper.Map<Event>(eventModel);
-
-
-            var subjectUsers = await _subjectRepository.Where(o => o.Id == eventModel.SubjectId)
+            var subject = await _subjectRepository.Where(o => o.Code == eventModel.SubjectCode).FirstOrDefaultAsync();
+            eventModel.SubjectId = subject.Id;
+            //var eventEntity = _mapper.Map<Event>(eventModel);
+            var eventEntity = new Event
+            {
+                SubjectId = eventModel.SubjectId,
+                StartDate = EnsureUtc(eventModel.StartDate),
+                EndDate = EnsureUtc(eventModel.EndDate),
+            };
+            var subjectUsers = await _subjectRepository.Where(o => o.Id == subject.Id)
                 .Include(o => o.SubjectUsers)
                 .ThenInclude(o => o.User).FirstOrDefaultAsync();
 
@@ -62,11 +68,11 @@ namespace ProgramServer.Application.Services.Events
                 if (!result.IsValid)
                     throw new ValidationException(result.Errors);
 
-                var eventEntity = _mapper.Map<Event>(eventModel);
+                //var eventEntity = _mapper.Map<Event>(eventModel);
 
-                _eventRepository.Add(eventEntity);
+                await Add(eventModel);
 
-                await _eventRepository.SaveAsync();
+                //await _eventRepository.SaveAsync();
             }
         }
 
@@ -76,8 +82,10 @@ namespace ProgramServer.Application.Services.Events
             return _mapper.Map<List<EventCreateModel>>(allevents);
         }
 
-        
-
+        private DateTime EnsureUtc(DateTime dateTime)
+        {
+            return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+        }
         //public async Task DeleteEvent(int id)
         //{
         //    await _eventRepository.Delete(o=>o.Id == id);

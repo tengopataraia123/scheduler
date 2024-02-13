@@ -19,10 +19,10 @@ namespace ProgramServer.Persistence.Configurations
 
             builder.Property(s => s.Code).HasMaxLength(10);
 
-            builder.HasMany(s => s.Events)
-                .WithOne(e => e.Subject)
-                .HasForeignKey(s => s.SubjectId)
-                .OnDelete(DeleteBehavior.Restrict);
+            //builder.HasMany(s => s.Events)
+            //    .WithOne(e => e.Subject)
+            //    .HasForeignKey(s => s.SubjectId)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
