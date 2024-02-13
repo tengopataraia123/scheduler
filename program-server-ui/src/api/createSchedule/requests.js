@@ -17,3 +17,19 @@ export const postAddStudent = (studentData) => {
     },
   });
 };
+
+export const getSubjects = () => {
+  return axios.get(`${apiUrl}/Subject/GetSubjects`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
+export const postAddEvents = (eventData) => {
+  return axios.post(`${apiUrl}/Event/AddEvents`, eventData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
