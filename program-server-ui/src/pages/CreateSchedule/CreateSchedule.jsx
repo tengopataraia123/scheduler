@@ -13,6 +13,7 @@ import { useFormik } from "formik";
 import AddSubjectForm from "./AddSubjectForm";
 import AddStudentsForm from "./AddStudentsForm";
 import AddEventsForm from "./AddEventsForm";
+import AddSubjectUsersForm from "./AddSubjectUsersForm";
 
 const CreateSchedule = () => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -59,19 +60,7 @@ const CreateSchedule = () => {
       {selectedOption === "AddSubject" && <AddSubjectForm />}
       {selectedOption === "AddStudent" && <AddStudentsForm />}
       {selectedOption === "AddEvent" && <AddEventsForm />}
-
-      {selectedOption === "AddSubjectStudents" && (
-        <Box component="form" onSubmit={formik.handleSubmit}>
-          {/* Form for AddSubjectStudents */}
-          <Typography variant="h6">
-            საგანზე სტუდენტი და ლექტორი დაამატეთ მხოლოდ განრიგის შექმნის შემდეგ
-          </Typography>
-          {/* Add your form fields here */}
-          <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-            დამატება
-          </Button>
-        </Box>
-      )}
+      {selectedOption === "AddSubjectStudents" && <AddSubjectUsersForm />}
     </>
   );
 };
