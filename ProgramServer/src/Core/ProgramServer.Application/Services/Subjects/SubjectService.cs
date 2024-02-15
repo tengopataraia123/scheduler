@@ -1,10 +1,8 @@
 ﻿
 
-using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using ProgramServer.Application.Exceptions;
 using ProgramServer.Application.Repository;
 using ProgramServer.Domain.Users;
@@ -65,23 +63,40 @@ namespace ProgramServer.Application.Services.Subjects
             foreach (var subjectUser in subjectUsers)
             {
                 var subject = await _subjectRepository.Where(s => s.Code == subjectUser.SubjectCode).FirstOrDefaultAsync();
+                if (subject == null)
+                {
+                    continue; 
+                }
                 subjectUser.SubjectId = subject.Id;
 
                 var userEntity = await _userRepository.Where(u => u.Email == subjectUser.UserEmail).FirstOrDefaultAsync();
+                if (userEntity == null)
+                {
+                    continue; 
+                }
                 subjectUser.UserId = userEntity.Id;
 
-                var entity = _mapper.Map<SubjectUser>(subjectUser);
+                var existingSubjectUser = await _subjectUserRepository
+                    .Where(su => su.UserId == subjectUser.UserId && su.SubjectId == subjectUser.SubjectId)
+                    .FirstOrDefaultAsync();
 
+                if (existingSubjectUser != null)
+                {
+                    continue;
+                }
+
+                var entity = _mapper.Map<SubjectUser>(subjectUser);
                 _subjectUserRepository.Add(entity);
                 await _subjectUserRepository.SaveAsync();
 
                 var events = await _eventRepository.Where(o => o.SubjectId == subjectUser.SubjectId).ToListAsync();
                 var user = await _userRepository.Where(o => o.Id == subjectUser.UserId).FirstOrDefaultAsync();
-                
-                GenerateBluetoothCodes(events,user);
+
+                GenerateBluetoothCodes(events, user);
                 await _bluetoothCodeRepository.SaveAsync();
             }
         }
+
 
         public async Task<List<SubjectCreateModel>> GetSubjectsByUserId(int userId)
         {
@@ -104,21 +119,6 @@ namespace ProgramServer.Application.Services.Subjects
             return _mapper.Map<List<SubjectCreateModel>>(allusers);
         }
 
-        //public async Task<SubjectModel> FindSubject(int id)
-        //{
-        //    var subject = await _subjectRepository.GetAll().Where(x=>x.Id == id).FirstOrDefaultAsync();
-
-        //    if (subject == null)
-        //        throw new NotFoundException(nameof(Subject), id);
-        //    return _mapper.Map<SubjectModel>(subject);
-        //}
-
-        //public async Task DeleteSubject(int id)
-        //{
-        //    await _subjectRepository.Delete(o=>o.Id  == id);
-        //}
-        
-        
         private void GenerateBluetoothCodes(IEnumerable<Event> eventEntities, User user)
         {
             var bluetoothCodes = new List<BluetoothCode>();
