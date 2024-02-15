@@ -60,6 +60,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 
 
+var secret = builder.Configuration.GetSection("AppSettings:Secret").Value;
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,31 +69,45 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer("Bearer",optons =>
     {
-        var value = builder.Configuration.GetSection("AppSettings:Secret").Value;
-        if (value != null)
-            optons.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                IssuerSigningKey =
-                    new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(value)),
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidateAudience = false,
-                RequireExpirationTime = false
-            };
+        optons.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidateAudience = false,
+            RequireExpirationTime = false
+        };
     });
 #region Swagger Dependencies
 
-builder.Services.AddSwaggerGen(swagger =>
+builder.Services.AddSwaggerGen(c =>
 {
-    swagger.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Version = "v1",
-        Title = "MainServer",
-        Description = "ASP.NET Core Web API"
+        Title = "ProgramApi",
+        Version = "v1"
     });
-
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please insert JWT with Bearer into field",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+   {
+     new OpenApiSecurityScheme
+     {
+       Reference = new OpenApiReference
+       {
+         Type = ReferenceType.SecurityScheme,
+         Id = "Bearer"
+       }
+      },
+      new string[] { }
+    }
+  });
 });
 #endregion
 var app = builder.Build();

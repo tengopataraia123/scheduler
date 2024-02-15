@@ -49,18 +49,14 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         builder =>
         {
-            builder.WithOrigins("http://localhost:3000", "https://localhost:3000", "http://localhost:3000/", "https://0.0.0.0:7137")
+            builder.AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
 });
 
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(cfg =>
                 {
                     cfg.RequireHttpsMetadata = true;
@@ -72,7 +68,6 @@ builder.Services.AddAuthentication(options =>
                         ValidateIssuer = false,
                         ValidateLifetime = false,
                         RequireExpirationTime = false,
-                        ClockSkew = TimeSpan.Zero,
                         ValidateIssuerSigningKey = true
                     };
                 });
@@ -124,12 +119,13 @@ app.UseSwaggerUI();
 app.UseCors();
 
 app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
 app.MapControllers();
+
+//app.UseHttpsRedirection();
+app.UseAuthentication();
+
+app.UseAuthorization();
+
 
 app.Run();
 

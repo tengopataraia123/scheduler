@@ -7,6 +7,6 @@ namespace ProgramServer.Application.Common.Models
         public int Id { get; set; }
         public string RoleName { get; set; }
         public string Email { get; set; }
-        public Roles RoleType { get; set; }
+        public string RoleType { get; set; }
     }
 }
