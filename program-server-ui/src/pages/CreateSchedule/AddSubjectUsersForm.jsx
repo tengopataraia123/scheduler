@@ -12,6 +12,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { Search } from "@mui/icons-material";
 import { getSubjects, getUsers } from "api/getSchedule/requests";
+import { postAddSubjectUsers } from "api/createSchedule/requests";
+import { toast } from "react-toastify";
 
 const AddSubjectUsersForm = () => {
   const [subjects, setSubjects] = useState([]);
@@ -95,6 +97,28 @@ const AddSubjectUsersForm = () => {
           (studentEmail) => !selectedStudents.includes(studentEmail)
         )
       );
+    }
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const subjectUsersData = selectedStudents.map((userEmail) => ({
+      subjectCode: selectedSubject,
+      userEmail: userEmail,
+    }));
+
+    try {
+      const response = await postAddSubjectUsers(subjectUsersData);
+      toast.success("მომხმარებლების სია წარმატებით დაემატა საგანს");
+      setSelectedSubject("");
+      setStudents([]);
+      setSelectedStudents([]);
+      setStudentSearchTerm("");
+      setSubjects([]);
+      console.log("Success:", response.data);
+    } catch (error) {
+      toast.error("დაფიქსირდა შეცდომა");
+      console.error("Error adding subject users:", error);
     }
   };
 
@@ -203,7 +227,13 @@ const AddSubjectUsersForm = () => {
           </Grid>
         )}
       </Grid>
-      <Button type="submit" variant="contained" fullWidth sx={{ mt: 3 }}>
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        sx={{ mt: 3 }}
+        onClick={handleSubmit}
+      >
         დამატება
       </Button>
     </form>

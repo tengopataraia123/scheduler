@@ -25,3 +25,11 @@ export const postAddEvents = (eventData) => {
     },
   });
 };
+
+export const postAddSubjectUsers = (subjectUsersData) => {
+  return axios.post(`${apiUrl}/Subject/AddSubjectUsers`, subjectUsersData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
