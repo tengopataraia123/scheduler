@@ -7,9 +7,11 @@ import {
   Typography,
   Chip,
   InputAdornment,
+  Tooltip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Search } from "@mui/icons-material";
+import { getSubjects, getUsers } from "api/getSchedule/requests";
 
 const AddSubjectUsersForm = () => {
   const [subjects, setSubjects] = useState([]);
@@ -19,33 +21,23 @@ const AddSubjectUsersForm = () => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [studentSearchTerm, setStudentSearchTerm] = useState("");
 
-  const searchSubjects = async (searchTerm) => {
-    return ["SUBJ101", "SUBJ102", "SUBJ103"].filter((code) =>
-      code.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
-
-  const searchStudents = async (searchTerm) => {
-    const filteredStudents = [
-      "student1@example.com",
-      "student2@example.com",
-      "student3@example.com",
-    ].filter(
-      (email) =>
-        email.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !selectedStudents.includes(email)
-    );
-    setStudents(filteredStudents);
-    if (!searchTerm) {
-      setAllStudents(filteredStudents);
-    }
-  };
-
   const handleSubjectSearch = async (event) => {
     const searchTerm = event.target.value;
     if (searchTerm.length > 0) {
-      const foundSubjects = await searchSubjects(searchTerm);
-      setSubjects(foundSubjects);
+      try {
+        const response = await getSubjects();
+        const data = response.data;
+        const filteredSubjects = data
+          .filter((subject) =>
+            subject.code.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .slice(0, 10);
+
+        setSubjects(filteredSubjects.map((subject) => subject.code));
+      } catch (error) {
+        console.error("ვერ მოიძებნა საგნები", error);
+        setSubjects([]);
+      }
     } else {
       setSubjects([]);
     }
@@ -54,7 +46,24 @@ const AddSubjectUsersForm = () => {
   const handleStudentSearch = async (event) => {
     const searchTerm = event.target.value;
     setStudentSearchTerm(searchTerm);
-    await searchStudents(searchTerm);
+
+    if (searchTerm.length > 0) {
+      try {
+        const response = await getUsers();
+        const data = response.data;
+        const filteredStudents = data
+          .filter((user) =>
+            user.email.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .slice(0, 10);
+        setStudents(filteredStudents.map((user) => user.email));
+      } catch (error) {
+        console.error("ვერ მოიძებნა მომხმარებლები", error);
+        setStudents([]);
+      }
+    } else {
+      setStudents([]);
+    }
   };
 
   const handleDeselectSubject = () => {
@@ -173,24 +182,29 @@ const AddSubjectUsersForm = () => {
                 }}
               />
               {students.map((student, index) => (
-                <Typography
-                  key={index}
-                  onClick={() => handleSelectStudent(student)}
-                  sx={{
-                    cursor: "pointer",
-                    "&:hover": { backgroundColor: "#f0f0f0" },
-                    mb: 1,
-                  }}
-                >
-                  {student}
-                </Typography>
+                <Tooltip key={index} title={student} placement="top" arrow>
+                  <Typography
+                    onClick={() => handleSelectStudent(student)}
+                    sx={{
+                      cursor: "pointer",
+                      "&:hover": { backgroundColor: "#f0f0f0" },
+                      mb: 1,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: "100%",
+                    }}
+                  >
+                    {student}
+                  </Typography>
+                </Tooltip>
               ))}
             </Paper>
           </Grid>
         )}
       </Grid>
-      <Button type="submit" variant="contained" sx={{ mt: 3 }}>
-        Submit
+      <Button type="submit" variant="contained" fullWidth sx={{ mt: 3 }}>
+        დამატება
       </Button>
     </form>
   );
