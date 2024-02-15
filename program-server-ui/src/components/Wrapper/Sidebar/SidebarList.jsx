@@ -18,6 +18,31 @@ const SidebarList = () => {
     <List>
       <ListItem disablePadding sx={{ display: "block" }}>
         <ListItemButton
+          onClick={() => navigate("/schedule")}
+          selected={pathname === "/schedule"}
+          sx={{
+            minHeight: 48,
+            justifyContent: open ? "initial" : "center",
+            px: 2.5,
+          }}
+        >
+          <ListItemIcon
+            sx={{
+              minWidth: 0,
+              mr: open ? 3 : "auto",
+              justifyContent: "center",
+            }}
+          >
+            <TableChart />
+          </ListItemIcon>
+          <ListItemText
+            primary="ცხრილის შექმნა"
+            sx={{ opacity: open ? 1 : 0 }}
+          />
+        </ListItemButton>
+      </ListItem>
+      <ListItem disablePadding sx={{ display: "block" }}>
+        <ListItemButton
           selected={pathname === "/"}
           onClick={() => navigate("/")}
           sx={{
@@ -59,29 +84,6 @@ const SidebarList = () => {
             <FormatListBulleted />
           </ListItemIcon>
           <ListItemText primary="შედეგები" sx={{ opacity: open ? 1 : 0 }} />
-        </ListItemButton>
-      </ListItem>
-
-      <ListItem disablePadding sx={{ display: "block" }}>
-        <ListItemButton
-          onClick={() => navigate("/schedule")}
-          selected={pathname === "/schedule"}
-          sx={{
-            minHeight: 48,
-            justifyContent: open ? "initial" : "center",
-            px: 2.5,
-          }}
-        >
-          <ListItemIcon
-            sx={{
-              minWidth: 0,
-              mr: open ? 3 : "auto",
-              justifyContent: "center",
-            }}
-          >
-            <TableChart />
-          </ListItemIcon>
-          <ListItemText primary="ცხრილი" sx={{ opacity: open ? 1 : 0 }} />
         </ListItemButton>
       </ListItem>
 
