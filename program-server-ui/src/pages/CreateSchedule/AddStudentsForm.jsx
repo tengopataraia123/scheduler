@@ -57,10 +57,10 @@ const AddStudentsForm = () => {
         }));
 
         await postAddStudent(submissionValues);
-        toast.success("Students list added successfully");
+        toast.success("მომხმარებლების სია დაემატა");
         formik.resetForm();
       } catch (error) {
-        toast.error("An error occurred");
+        toast.error("დაფიქსირდა შეცდომა");
       }
     },
   });
