@@ -202,7 +202,7 @@ const AddSubjectForm = () => {
           margin="normal"
           fullWidth
           id="description.location.address"
-          label="მისამართი"
+          label="ჩატარების ადგილი "
           name="description.location.address"
           value={formik.values.description.location.address}
           onChange={formik.handleChange}
