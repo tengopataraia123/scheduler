@@ -52,13 +52,24 @@ namespace ProgramServer.Application.Services.Users
 
                 if (!result.IsValid)
                     throw new ValidationException(result.Errors);
+
                 userModel.Password = " ";
                 var user = _mapper.Map<User>(userModel);
 
-                _userRepository.Add(user);
-                await _userRepository.SaveAsync();
+                var userExists = await _userRepository.Where(u => u.Email == userModel.Email).AnyAsync();
+
+                if (userExists)
+                {
+                    continue;
+                }
+                else
+                {
+                    _userRepository.Add(user);
+                    await _userRepository.SaveAsync();
+                }
             }
         }
+
 
         public async Task<List<UserCreateModel>> GetAll()
         {
