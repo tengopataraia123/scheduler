@@ -57,10 +57,10 @@ const AddStudentsForm = () => {
         }));
 
         await postAddStudent(submissionValues);
-        toast.success("მომხმარებლების სია დაემატა");
+        toast.success("Students list added successfully");
         formik.resetForm();
       } catch (error) {
-        toast.error("დაფიქსირდა შეცდომა");
+        toast.error("An error occurred");
       }
     },
   });
@@ -80,14 +80,40 @@ const AddStudentsForm = () => {
                   key={index}
                   elevation={2}
                   sx={{
-                    p: 6,
-                    mb: 5,
+                    p: 3,
+                    mb: 3,
                     position: "relative",
                     backgroundColor: "#fafafa",
-                    overflow: "visible",
                   }}
                 >
-                  <Box display="flex" flexDirection="column" gap={1}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="h6">
+                        მომხმარებელი #{index + 1}
+                      </Typography>
+                      <IconButton
+                        aria-label="remove"
+                        onClick={() => arrayHelpers.remove(index)}
+                        sx={{
+                          color: "error.main",
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+
                     <TextField
                       name={`students[${index}].firstName`}
                       required
@@ -148,24 +174,8 @@ const AddStudentsForm = () => {
                       name={`students[${index}].roleId`}
                       label="როლი"
                       value={student.roleId || ""}
-                      onChange={(event) => {
-                        formik.setFieldValue(
-                          `students[${index}].roleId`,
-                          Number(event.target.value) || null
-                        );
-                        // Manually set the field as touched upon value change
-                        formik.setFieldTouched(
-                          `students[${index}].roleId`,
-                          true,
-                          false
-                        );
-                      }}
-                      onBlur={() =>
-                        formik.setFieldTouched(
-                          `students[${index}].roleId`,
-                          true
-                        )
-                      }
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       error={
                         formik.touched.students?.[index]?.roleId &&
                         Boolean(formik.errors.students?.[index]?.roleId)
@@ -181,18 +191,6 @@ const AddStudentsForm = () => {
                       <MenuItem value={2}>ლექტორი</MenuItem>
                     </TextField>
                   </Box>
-                  <IconButton
-                    aria-label="remove"
-                    onClick={() => arrayHelpers.remove(index)}
-                    sx={{
-                      position: "absolute",
-                      top: 4,
-                      right: 4,
-                      color: "error.main",
-                    }}
-                  >
-                    <DeleteIcon fontSize="large" />
-                  </IconButton>
                 </Paper>
               ))}
               <Box display="flex" justifyContent="center" sx={{ mt: 2 }}>
@@ -203,7 +201,8 @@ const AddStudentsForm = () => {
                       firstName: "",
                       lastName: "",
                       email: "",
-                      roleId: "",
+                      roleId: null,
+                      password: "",
                     })
                   }
                   color="primary"
