@@ -50,6 +50,8 @@ public class AuthService : IAuthService
         if (user == null)
             throw new UnauthorizedAccessException();
 
+        _logger.LogError($"role is {user.Role.RoleName}");
+
         var claims = new Claim[]
         {
             new Claim(ClaimTypes.Role, user.Role.RoleName),
