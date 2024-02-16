@@ -33,7 +33,6 @@ public class AuthService : IAuthService
     }
     public async Task<string> GenerateToken(string idToken)
     {
-        _logger.LogError("token: ", idToken);
         var googleUser = await GoogleJsonWebSignature.ValidateAsync(idToken,
             new GoogleJsonWebSignature.ValidationSettings()
             {
@@ -50,8 +49,6 @@ public class AuthService : IAuthService
         if (user == null)
             throw new UnauthorizedAccessException();
 
-        _logger.LogError($"role is {user.Role.RoleName}");
-
         var claims = new Claim[]
         {
             new Claim(ClaimTypes.Role, user.Role.RoleName),
@@ -65,7 +62,7 @@ public class AuthService : IAuthService
         {
             Subject = new ClaimsIdentity(claims),
 
-            // Expires = DateTime.Now.AddDays(7),
+            Expires = DateTime.Now.AddDays(7),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         
