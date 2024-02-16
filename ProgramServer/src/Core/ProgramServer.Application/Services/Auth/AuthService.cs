@@ -4,6 +4,7 @@ using System.Text;
 using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ProgramServer.Application.Repository;
 using ProgramServer.Domain.Users;
@@ -17,8 +18,10 @@ public class AuthService : IAuthService
     private readonly string iosClientId;
     private readonly string webClientId;
     private readonly string _secret;
-    
+    private readonly ILogger _logger;
+
     public AuthService(IRepository<User> userRepository,
+        ILogger<AuthService> logger,
         IConfiguration configuration)
     {
         _userRepository = userRepository;
@@ -26,9 +29,11 @@ public class AuthService : IAuthService
         iosClientId = configuration.GetSection("AppSettings")?.GetValue<string>("IosClientId") ?? string.Empty;
         webClientId = configuration.GetSection("AppSettings")?.GetValue<string>("WebClientId") ?? string.Empty;
         _secret = configuration.GetSection("AppSettings")?.GetValue<string>("Secret") ?? string.Empty;
+        _logger = logger;
     }
     public async Task<string> GenerateToken(string idToken)
     {
+        _logger.LogError("token: ", idToken);
         var googleUser = await GoogleJsonWebSignature.ValidateAsync(idToken,
             new GoogleJsonWebSignature.ValidationSettings()
             {
