@@ -11,7 +11,7 @@ import {
   Switch,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CancelIcon from "@mui/icons-material/Cancel";
 import * as yup from "yup";
 import { postAddEvents } from "api/createSchedule/requests";
 import { toast } from "react-toastify";
@@ -188,10 +188,14 @@ const AddEventsForm = () => {
                           position: "absolute",
                           top: 4,
                           right: 4,
-                          color: "error.main",
+                          color: "black",
+                          "&:hover": {
+                            color: "red",
+                            backgroundColor: "rgba(255, 0, 0, 0.1)",
+                          },
                         }}
                       >
-                        <DeleteIcon fontSize="large" />
+                        <CancelIcon fontSize="large" />
                       </IconButton>
                     )}
                   </Box>

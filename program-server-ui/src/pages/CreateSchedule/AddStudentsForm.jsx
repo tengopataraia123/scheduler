@@ -10,7 +10,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import DeleteIcon from "@mui/icons-material/Delete";
+import CancelIcon from "@mui/icons-material/Cancel";
 import * as yup from "yup";
 import { postAddStudent } from "api/createSchedule/requests";
 import { toast } from "react-toastify";
@@ -107,10 +107,14 @@ const AddStudentsForm = () => {
                         aria-label="remove"
                         onClick={() => arrayHelpers.remove(index)}
                         sx={{
-                          color: "error.main",
+                          color: "black",
+                          "&:hover": {
+                            color: "red",
+                            backgroundColor: "rgba(255, 0, 0, 0.1)",
+                          },
                         }}
                       >
-                        <DeleteIcon />
+                        <CancelIcon fontSize="large" />{" "}
                       </IconButton>
                     </Box>
 
