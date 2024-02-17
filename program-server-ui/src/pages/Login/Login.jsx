@@ -1,6 +1,6 @@
 import React from "react";
 import { ReactComponent as SchedulerIcon } from "../../assets/icons/Scheduler.svg";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import InputValidationError from "../../components/InputValidationError";
@@ -12,7 +12,6 @@ import {
   Box,
   Typography,
   TextField,
-  Grid,
   Button,
 } from "@mui/material";
 import { useAuth } from "context/authContext";
@@ -118,13 +117,6 @@ export const Login = () => {
           >
             შესვლა
           </Button>
-          <Grid container>
-            <Grid item ml={"auto"}>
-              <Link href="#" variant="body2">
-                რეგისტრაცია
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>
