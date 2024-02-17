@@ -91,9 +91,9 @@ export const Register = () => {
             margin="normal"
             required
             fullWidth
-            id="FirstName"
+            id="firstName"
             label="სახელი"
-            name="FirstName"
+            name="firstName"
             autoComplete="given-name"
             value={formik.values.firstName}
             onChange={formik.handleChange}
@@ -107,9 +107,9 @@ export const Register = () => {
             margin="normal"
             required
             fullWidth
-            id="LastName"
+            id="lastName"
             label="გვარი"
-            name="LastName"
+            name="lastName"
             autoComplete="family-name"
             value={formik.values.lastName}
             onChange={formik.handleChange}
