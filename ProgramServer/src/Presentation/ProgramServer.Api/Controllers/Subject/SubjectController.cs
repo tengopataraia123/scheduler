@@ -42,7 +42,7 @@ namespace ProgramServer.Api.Controllers.Subject
         }
 
         [HttpGet("GetAllSubjects")]
-        public async Task<ActionResult<List<SubjectCreateModel>>> GetAllSubjects()
+        public async Task<ActionResult<List<SubjectGetModel>>> GetAllSubjects()
         {
             var subjects = await _subjectService.GetAllSubjects();
             return Ok(subjects);

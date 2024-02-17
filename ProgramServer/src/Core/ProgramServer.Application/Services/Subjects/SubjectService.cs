@@ -98,7 +98,7 @@ namespace ProgramServer.Application.Services.Subjects
         }
 
 
-        public async Task<List<SubjectCreateModel>> GetSubjectsByUserId(int userId)
+        public async Task<List<SubjectGetModel>> GetSubjectsByUserId(int userId)
         {
             var subjects = await _subjectRepository.GetAll().Where(x => x.SubjectUsers.Any(s => s.UserId == userId))
                 .Include(s => s.Events)
@@ -110,13 +110,13 @@ namespace ProgramServer.Application.Services.Subjects
                 throw new NotFoundException(nameof(Subject), userId);
             }
 
-            return _mapper.Map<List<SubjectCreateModel>>(subjects);
+            return _mapper.Map<List<SubjectGetModel>>(subjects);
         }
 
-        public async Task<List<SubjectCreateModel>> GetAllSubjects()
+        public async Task<List<SubjectGetModel>> GetAllSubjects()
         {
             var allusers = await _subjectRepository.GetAll().ToListAsync();
-            return _mapper.Map<List<SubjectCreateModel>>(allusers);
+            return _mapper.Map<List<SubjectGetModel>>(allusers);
         }
 
         private void GenerateBluetoothCodes(IEnumerable<Event> eventEntities, User user)

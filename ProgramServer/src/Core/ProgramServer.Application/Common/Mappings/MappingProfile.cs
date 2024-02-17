@@ -28,6 +28,11 @@ namespace ProgramServer.Application.Common.Mappings
                 .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ReverseMap();
+            CreateMap<SubjectGetModel, Subject>()
+                .ForMember(dest => dest.DescriptionStr, opt => opt.MapFrom(src => JsonConvert.SerializeObject(src.Description)))
+                .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ReverseMap();
             CreateMap<SubjectUserModel, SubjectUser>().ReverseMap();
         }
     }
