@@ -11,7 +11,10 @@ export const login = (params) => {
 
 export const registration = (params) => {
   return axios.post(`${apiUrl}/UserLogin/UserRegistration`, {
-    mail: params.email,
+    firstName: params.firstName,
+    lastName: params.lastName,
+    userName: params.userName,
+    mail: params.mail,
     password: params.password,
   });
 };
