@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 
 const validationSchema = yup.object().shape({
-  email: yup
+  mail: yup
     .string()
     .email("ელფოსტის ფორმატი არასწორია.")
     .required("ელფოსტის ველი სავალდებულოა."),
@@ -36,7 +36,7 @@ export const Register = () => {
       firstName: "",
       lastName: "",
       userName: "",
-      email: "",
+      mail: "",
       password: "",
       repeatPassword: "",
     },
@@ -47,7 +47,7 @@ export const Register = () => {
         firstName: values.firstName,
         lastName: values.lastName,
         userName: values.userName,
-        email: values.email,
+        mail: values.mail,
         password: values.password,
       })
         .then((response) => {
@@ -123,18 +123,18 @@ export const Register = () => {
             margin="normal"
             required
             fullWidth
-            id="email"
+            id="mail"
             label="ელ-ფოსტა"
-            name="email"
-            autoComplete="email"
-            value={formik.values.email}
+            name="mail"
+            autoComplete="mail"
+            value={formik.values.mail}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.email && Boolean(formik.errors.email)}
+            error={formik.touched.mail && Boolean(formik.errors.mail)}
             autoFocus
           />
-          {formik.touched.email && formik.errors.email && (
-            <InputValidationError message={formik.errors.email} />
+          {formik.touched.mail && formik.errors.mail && (
+            <InputValidationError message={formik.errors.mail} />
           )}
           <TextField
             margin="normal"
