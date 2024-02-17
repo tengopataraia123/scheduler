@@ -25,8 +25,8 @@ const validationSchema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password"), null], "პაროლები ერთმანეთს არ ემთხვევა.")
     .required("პაროლის ველი სავალდებულოა."),
-  FirstName: yup.string().required("სახელის ველი სავალდებულოა."),
-  LastName: yup.string().required("გვარის ველი სავალდებულოა."),
+  firstName: yup.string().required("სახელის ველი სავალდებულოა."),
+  lastName: yup.string().required("გვარის ველი სავალდებულოა."),
 });
 
 export const Register = () => {
@@ -36,9 +36,9 @@ export const Register = () => {
       email: "",
       password: "",
       repeatPassword: "",
-      FirstName: "",
-      LastName: "",
-      UserName: "",
+      firstName: "",
+      lastName: "",
+      userName: "",
     },
 
     validationSchema: validationSchema,
@@ -46,9 +46,9 @@ export const Register = () => {
       registration({
         email: values.email,
         password: values.password,
-        FirstName: values.FirstName,
-        LastName: values.LastName,
-        UserName: "",
+        firstName: values.firstName,
+        lastName: values.lastName,
+        userName: "",
       })
         .then((response) => {
           toast.success("თქვენ წარმატებით დარეგისტრირდით!");
@@ -95,13 +95,13 @@ export const Register = () => {
             label="სახელი"
             name="FirstName"
             autoComplete="given-name"
-            value={formik.values.FirstName}
+            value={formik.values.firstName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.FirstName && Boolean(formik.errors.FirstName)}
+            error={formik.touched.firstName && Boolean(formik.errors.firstName)}
           />
-          {formik.touched.FirstName && formik.errors.FirstName && (
-            <InputValidationError message={formik.errors.FirstName} />
+          {formik.touched.firstName && formik.errors.firstName && (
+            <InputValidationError message={formik.errors.firstName} />
           )}
           <TextField
             margin="normal"
@@ -111,13 +111,13 @@ export const Register = () => {
             label="გვარი"
             name="LastName"
             autoComplete="family-name"
-            value={formik.values.LastName}
+            value={formik.values.lastName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.LastName && Boolean(formik.errors.LastName)}
+            error={formik.touched.lastName && Boolean(formik.errors.lastName)}
           />
-          {formik.touched.LastName && formik.errors.LastName && (
-            <InputValidationError message={formik.errors.LastName} />
+          {formik.touched.lastName && formik.errors.lastName && (
+            <InputValidationError message={formik.errors.lastName} />
           )}
           <TextField
             margin="normal"
