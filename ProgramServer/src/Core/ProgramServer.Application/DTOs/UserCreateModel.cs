@@ -1,7 +1,4 @@
-﻿using System;
-using FluentValidation;
-using ProgramServer.Domain.Roles;
-using ProgramServer.Domain.SubjectUsers;
+﻿using FluentValidation;
 
 namespace ProgramServer.Application.DTOs
 {
