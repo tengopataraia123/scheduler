@@ -1,6 +1,6 @@
 import React from "react";
 import { ReactComponent as SchedulerIcon } from "../../assets/icons/Scheduler.svg";
-import { Link, useNavigate } from "react-router-dom"; // Make sure useNavigate is imported if you need navigation
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import InputValidationError from "../../components/InputValidationError";
@@ -25,26 +25,36 @@ const validationSchema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password"), null], "პაროლები ერთმანეთს არ ემთხვევა.")
     .required("პაროლის ველი სავალდებულოა."),
+  FirstName: yup.string().required("სახელის ველი სავალდებულოა."),
+  LastName: yup.string().required("გვარის ველი სავალდებულოა."),
 });
 
 export const Register = () => {
-  const navigate = useNavigate(); // Use if you need to redirect after registration
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
       repeatPassword: "",
+      FirstName: "",
+      LastName: "",
+      UserName: "",
     },
+
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      registration({ email: values.email, password: values.password })
+      registration({
+        email: values.email,
+        password: values.password,
+        FirstName: values.FirstName,
+        LastName: values.LastName,
+        UserName: "",
+      })
         .then((response) => {
-          console.log(response);
           toast.success("თქვენ წარმატებით დარეგისტრირდით!");
-          navigate("/login"); // Or wherever you wish to redirect
+          navigate("/login");
         })
         .catch((error) => {
-          console.log(error);
           toast.error("დაფიქსირდა შეცდომა!");
         });
     },
@@ -77,6 +87,38 @@ export const Register = () => {
           sx={{ mt: 1 }}
           className="w-full"
         >
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="FirstName"
+            label="სახელი"
+            name="FirstName"
+            autoComplete="given-name"
+            value={formik.values.FirstName}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.FirstName && Boolean(formik.errors.FirstName)}
+          />
+          {formik.touched.FirstName && formik.errors.FirstName && (
+            <InputValidationError message={formik.errors.FirstName} />
+          )}
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="LastName"
+            label="გვარი"
+            name="LastName"
+            autoComplete="family-name"
+            value={formik.values.LastName}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.LastName && Boolean(formik.errors.LastName)}
+          />
+          {formik.touched.LastName && formik.errors.LastName && (
+            <InputValidationError message={formik.errors.LastName} />
+          )}
           <TextField
             margin="normal"
             required
