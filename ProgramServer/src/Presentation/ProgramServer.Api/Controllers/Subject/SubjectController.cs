@@ -1,15 +1,11 @@
-﻿using System;
-using AutoMapper;
-using System.Data.Entity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using ProgramServer.Application.DTOs;
 using ProgramServer.Application.Services.Subjects;
 using Microsoft.AspNetCore.Authorization;
-using ProgramServer.Domain.Roles;
 
 namespace ProgramServer.Api.Controllers.Subject
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class SubjectController : ApiControllerBase
@@ -22,7 +18,7 @@ namespace ProgramServer.Api.Controllers.Subject
         }
 
         [HttpPost("Create")]
-        [Authorize(Roles = "admin,coordinator")]
+        //[Authorize(Roles = "admin,coordinator")]
         public async Task<ActionResult> CreateSubject([FromBody] SubjectCreateModel subjectModel)
         {
             await _subjectService.CreateSubject(subjectModel);
@@ -30,7 +26,7 @@ namespace ProgramServer.Api.Controllers.Subject
         }
 
         [HttpPost("[action]")]
-        [Authorize(Roles = "admin,coordinator")]
+        //[Authorize(Roles = "admin,coordinator")]
         public async Task<IActionResult> AddSubjectUsers([FromBody] List<SubjectUserModel> subjectUsers)
         {
             await _subjectService.AddSubjectUsers(subjectUsers);

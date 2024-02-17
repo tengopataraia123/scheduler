@@ -6,7 +6,7 @@ using ProgramServer.Application.Services.Surveys;
 
 namespace ProgramServer.Api.Controllers.Survey
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class SurveyController : ApiControllerBase

@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ProgramServer.Application.DTOs;
 using ProgramServer.Application.Services.Events;
 
 namespace ProgramServer.Api.Controllers.Event
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class EventController : ControllerBase

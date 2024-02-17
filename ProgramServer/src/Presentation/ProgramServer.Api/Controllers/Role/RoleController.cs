@@ -6,6 +6,7 @@ using ProgramServer.Application.Services.Roles;
 
 namespace ProgramServer.Api.Controllers.Role
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class RoleController : ControllerBase

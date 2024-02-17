@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using ProgramServer.Application.DTOs;
-using ProgramServer.Application.Services.Bluetooth;
 using ProgramServer.Application.Services.Users;
 
 namespace ProgramServer.Api.Controllers.User
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class SchedulerUserController : ControllerBase
