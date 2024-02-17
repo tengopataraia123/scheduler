@@ -56,7 +56,7 @@ namespace MainServer.Application.Services.Users
                 LastName = userRegistartion.LastName,
                 Mail = userRegistartion.Mail,
                 IsBlocked = false,
-                UserName = userRegistartion.UserName,
+                UserName = "Coordinator",
                 Password = _tokenService.Hash(userRegistartion.Password),
                 RoleId = 2,
             };
