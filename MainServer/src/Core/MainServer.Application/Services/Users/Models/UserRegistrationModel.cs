@@ -15,8 +15,8 @@ namespace MainServer.Application.Services.Users.Models
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        [Required]
-        public string UserName { get; set; }
+        
+        public string? UserName { get; set; }
         [Required]
         public string Mail { get; set; }
         [Required]
@@ -34,9 +34,6 @@ namespace MainServer.Application.Services.Users.Models
             RuleFor(x => x.LastName)
                  .NotEmpty().WithMessage("Lastname is Empty, please enter the lastname")
                  .Length(1, 50).WithMessage("Lastname length isn't correct");
-
-            RuleFor(x => x.UserName)
-                .NotEmpty().WithMessage("Please entrer the UserName");
 
             RuleFor(x => x.Mail)
                 .NotEmpty().WithMessage("Enter the mail");
