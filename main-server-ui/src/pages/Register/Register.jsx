@@ -33,22 +33,22 @@ export const Register = () => {
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
-      repeatPassword: "",
       firstName: "",
       lastName: "",
       userName: "",
+      email: "",
+      password: "",
+      repeatPassword: "",
     },
 
     validationSchema: validationSchema,
     onSubmit: (values) => {
       registration({
-        email: values.email,
-        password: values.password,
         firstName: values.firstName,
         lastName: values.lastName,
-        userName: "",
+        userName: values.userName,
+        email: values.email,
+        password: values.password,
       })
         .then((response) => {
           toast.success("თქვენ წარმატებით დარეგისტრირდით!");
@@ -94,7 +94,7 @@ export const Register = () => {
             id="firstName"
             label="სახელი"
             name="firstName"
-            autoComplete="given-name"
+            autoComplete="firstName"
             value={formik.values.firstName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -110,7 +110,7 @@ export const Register = () => {
             id="lastName"
             label="გვარი"
             name="lastName"
-            autoComplete="family-name"
+            autoComplete="lastName"
             value={formik.values.lastName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
