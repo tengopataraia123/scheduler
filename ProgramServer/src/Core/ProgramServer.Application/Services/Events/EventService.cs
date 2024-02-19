@@ -88,7 +88,7 @@ namespace ProgramServer.Application.Services.Events
         }
         public async Task DeleteEvents(List<int> eventIds)
         {
-            await _eventRepository.Delete(o=> eventIds.Contains(o.SubjectId));
+            await _eventRepository.Delete(o=> eventIds.Contains(o.Id));
         }
     }
 }

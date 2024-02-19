@@ -34,10 +34,11 @@ namespace ProgramServer.Persistence.Repository
 
         public async Task Delete(Expression<Func<T, bool>> predicate)
         {
-            var entities = await _dbContext.Set<T>().Where(predicate).ToListAsync();
+            var entities = _dbContext.Set<T>().Where(predicate).ToList(); // Use synchronous ToList
             _dbContext.Set<T>().RemoveRange(entities);
             await _dbContext.SaveChangesAsync();
         }
+
 
         public IQueryable<T> GetAll()
         {

@@ -38,12 +38,13 @@ namespace ProgramServer.Api.Controllers.Event
             return Ok(events);
         }
 
-        [HttpDelete("DeleteBySubjectIds")]
-        public async Task<ActionResult> DeleteEvents([FromQuery] List<int> subjectIds)
+        [HttpPost("DeleteEvents")]
+        public async Task<IActionResult> DeleteEvents([FromBody] List<int> eventIds)
         {
-            await _eventService.DeleteEvents(subjectIds);
+            await _eventService.DeleteEvents(eventIds);
             return Ok();
         }
+
     }
 }
 
