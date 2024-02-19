@@ -86,10 +86,10 @@ namespace ProgramServer.Application.Services.Events
         {
             return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
         }
-        //public async Task DeleteEvent(int id)
-        //{
-        //    await _eventRepository.Delete(o=>o.Id == id);
-        //}
+        public async Task DeleteEvent(List<int> subjectIds)
+        {
+            await _eventRepository.Delete(o=> subjectIds.Contains(o.SubjectId));
+        }
 
         //public async Task<EventModel> FindEvent(int id)
         //{

@@ -38,19 +38,12 @@ namespace ProgramServer.Api.Controllers.Event
             return Ok(events);
         }
 
-        //[HttpGet("Find/{id}")]
-        //public async Task<ActionResult<EventModel>> FindEvent([FromRoute] int id)
-        //{
-        //    var eventResult = await _eventService.FindEvent(id);
-        //    return Ok(eventResult);
-        //}
-
-        //[HttpDelete("Delete/{id}")]
-        //public async Task<ActionResult> DeleteEvent([FromRoute] int id)
-        //{
-        //    await _eventService.DeleteEvent(id);
-        //    return Ok();
-        //}
+        [HttpDelete("DeleteBySubjectIds")]
+        public async Task<ActionResult> DeleteEvents([FromQuery] List<int> subjectIds)
+        {
+            await _eventService.DeleteEvents(subjectIds);
+            return Ok();
+        }
     }
 }
 

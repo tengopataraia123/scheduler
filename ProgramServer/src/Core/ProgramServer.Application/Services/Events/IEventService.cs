@@ -10,7 +10,7 @@ namespace ProgramServer.Application.Services.Events
         Task<List<EventCreateModel>> GetAll();
         
         //Task<EventModel> FindEvent(int id);
-        //Task DeleteEvent(int id);
+        Task DeleteEvents(List<int> subjectIds);
     }
 }
 
