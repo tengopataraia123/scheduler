@@ -86,7 +86,7 @@ namespace ProgramServer.Application.Services.Events
         {
             return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
         }
-        public async Task DeleteEvent(List<int> subjectIds)
+        public async Task DeleteEvents(List<int> subjectIds)
         {
             await _eventRepository.Delete(o=> subjectIds.Contains(o.SubjectId));
         }
