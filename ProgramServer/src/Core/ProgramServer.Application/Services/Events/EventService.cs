@@ -76,29 +76,20 @@ namespace ProgramServer.Application.Services.Events
             }
         }
 
-        public async Task<List<EventCreateModel>> GetAll()
+        public async Task<List<EventGetModel>> GetAll()
         {
             var allevents = await _eventRepository.GetAll().ToListAsync();
-            return _mapper.Map<List<EventCreateModel>>(allevents);
+            return _mapper.Map<List<EventGetModel>>(allevents);
         }
 
         private DateTime EnsureUtc(DateTime dateTime)
         {
             return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
         }
-        public async Task DeleteEvents(List<int> subjectIds)
+        public async Task DeleteEvents(List<int> eventIds)
         {
-            await _eventRepository.Delete(o=> subjectIds.Contains(o.SubjectId));
+            await _eventRepository.Delete(o=> eventIds.Contains(o.SubjectId));
         }
-
-        //public async Task<EventModel> FindEvent(int id)
-        //{
-        //    var eventResult = await _eventRepository.Where(o => o.Id == id).FirstOrDefaultAsync();
-        //    if (eventResult == null)
-        //        throw new NotFoundException(nameof(Event), id);
-
-        //    return _mapper.Map<EventModel>(eventResult);
-        //}
     }
 }
 

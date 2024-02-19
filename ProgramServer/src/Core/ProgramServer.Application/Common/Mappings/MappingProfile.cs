@@ -23,6 +23,10 @@ namespace ProgramServer.Application.Common.Mappings
             CreateMap<Survey, SurveyModel>().ReverseMap();
             CreateMap<Response, ResponseModel>().ReverseMap();
             CreateMap<Event, EventCreateModel>().ReverseMap();
+            CreateMap<Event, EventGetModel>()
+                .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap(); 
+
 
             CreateMap<SubjectCreateModel, Subject>()
                 .ForMember(dest => dest.DescriptionStr, opt => opt.MapFrom(src => JsonConvert.SerializeObject(src.Description)))

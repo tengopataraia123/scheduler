@@ -32,7 +32,7 @@ namespace ProgramServer.Api.Controllers.Event
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<List<EventCreateModel>>> GetAll()
+        public async Task<ActionResult<List<EventGetModel>>> GetAll()
         {
             var events = await _eventService.GetAll();
             return Ok(events);
