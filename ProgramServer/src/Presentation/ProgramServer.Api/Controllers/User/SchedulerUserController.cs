@@ -31,7 +31,7 @@ namespace ProgramServer.Api.Controllers.User
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<List<UserCreateModel>>> GetAll()
+        public async Task<ActionResult<List<UserGetModel>>> GetAll()
         {
             var users = await _userService.GetAll();
             return Ok(users);

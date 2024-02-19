@@ -7,7 +7,7 @@ namespace ProgramServer.Application.Services.Users
     {
         Task Add(UserCreateModel user);
         Task AddUsers(List<UserCreateModel> users);
-        Task<List<UserCreateModel>> GetAll();
+        Task<List<UserGetModel>> GetAll();
         //Task Delete(int id);
     }
 }

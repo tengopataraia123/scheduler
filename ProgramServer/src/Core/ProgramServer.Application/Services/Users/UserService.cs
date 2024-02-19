@@ -71,10 +71,10 @@ namespace ProgramServer.Application.Services.Users
         }
 
 
-        public async Task<List<UserCreateModel>> GetAll()
+        public async Task<List<UserGetModel>> GetAll()
         {
             var allusers = await _userRepository.GetAll().ToListAsync();
-            return _mapper.Map<List<UserCreateModel>>(allusers);
+            return _mapper.Map<List<UserGetModel>>(allusers);
         }
 
         //public async Task Delete(int id)
