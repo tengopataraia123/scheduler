@@ -17,3 +17,11 @@ export const getUsers = () => {
     },
   });
 };
+
+export const getEvents = () => {
+  return axios.get(`${apiUrl}/Event/GetAll`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
