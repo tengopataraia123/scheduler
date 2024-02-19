@@ -107,32 +107,38 @@ const Events = () => {
     setCurrentPage(currentPage + 1);
   };
 
-  const handleSelectAllClick = (event) => {
-    // Toggle selection logic here
-    const allDisplayedSelected = currentEvents.every(
-      (event) => selectedEvents[event.subjectCode]
+  const handleSelectAllClick = () => {
+    const allFilteredEventIds = filteredEvents.map((e) => e.eventId.toString());
+    const areAllFilteredSelected = allFilteredEventIds.every(
+      (id) => selectedEvents[id]
     );
 
-    if (allDisplayedSelected) {
-      setSelectedEvents({});
+    if (areAllFilteredSelected) {
+      // If all filtered are currently selected, deselect them
+      const newSelectedEvents = { ...selectedEvents };
+      allFilteredEventIds.forEach((id) => {
+        delete newSelectedEvents[id];
+      });
+      setSelectedEvents(newSelectedEvents);
     } else {
-      const newSelectedEvents = currentEvents.reduce((acc, currentEvent) => {
-        acc[currentEvent.subjectCode] = true;
-        return acc;
-      }, {});
+      // If not all filtered are selected, select all filtered
+      const newSelectedEvents = { ...selectedEvents };
+      allFilteredEventIds.forEach((id) => {
+        newSelectedEvents[id] = true;
+      });
       setSelectedEvents(newSelectedEvents);
     }
   };
 
-  const handleSelectClick = (event, subjectCode) => {
-    const newSelectedEvents = {
-      ...selectedEvents,
-      [subjectCode]: !selectedEvents[subjectCode],
-    };
-    setSelectedEvents(newSelectedEvents);
+  const handleSelectClick = (event, eventId) => {
+    const isSelected = !!selectedEvents[eventId];
+    setSelectedEvents((prev) => ({
+      ...prev,
+      [eventId]: !isSelected,
+    }));
   };
 
-  const isSelected = (subjectCode) => !!selectedEvents[subjectCode];
+  const isSelected = (eventId) => !!selectedEvents[eventId];
 
   const handleDeleteSelected = async () => {
     const selectedSubjectIds = Object.keys(selectedEvents)
@@ -159,33 +165,36 @@ const Events = () => {
   };
 
   const exportToExcel = () => {
-    // Filter only selected events
     const selectedEventIds = Object.keys(selectedEvents).filter(
       (key) => selectedEvents[key]
     );
-    const selectedEventsToExport = events.filter((event) =>
-      selectedEventIds.includes(event.subjectCode)
-    );
-
-    if (selectedEventsToExport.length === 0) {
-      alert("Please select events to export.");
+    if (selectedEventIds.length === 0) {
+      alert("Please select at least one event to export.");
       return;
     }
 
-    // Convert filtered data to a worksheet
-    const ws = XLSX.utils.json_to_sheet(
-      selectedEventsToExport.map((event) => ({
-        "Subject Code": event.subjectCode,
+    const eventsToExport = events.filter((event) =>
+      selectedEventIds.includes(event.eventId.toString())
+    );
+
+    if (eventsToExport.length === 0) {
+      alert("No events found to export.");
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(
+      eventsToExport.map((event) => ({
+        "Event ID": event.eventId,
+        "Subject Code": event.subjectCode || "N/A",
         "Subject Name": event.subjectName,
-        "Start Time": new Date(event.startDate).toLocaleString(),
-        "End Time": new Date(event.endDate).toLocaleString(),
-        // Add other event details you wish to export
+        "Start Time": event.startDate,
+        "End Time": event.endDate,
       }))
     );
 
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Selected Events");
-    XLSX.writeFile(wb, "selected_events.xlsx");
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Events");
+    XLSX.writeFile(workbook, "events_export.xlsx");
   };
 
   return (
@@ -275,12 +284,15 @@ const Events = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentEvents.map((event, index) => (
-              <TableRow key={index} selected={isSelected(event.subjectCode)}>
+            {currentEvents.map((event) => (
+              <TableRow
+                key={event.eventId}
+                selected={isSelected(event.eventId)}
+              >
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={isSelected(event.subjectCode)}
-                    onChange={(e) => handleSelectClick(e, event.subjectCode)}
+                    checked={isSelected(event.eventId)}
+                    onChange={(e) => handleSelectClick(e, event.eventId)}
                   />
                 </TableCell>
                 <TableCell>{event.subjectCode}</TableCell>
