@@ -23,6 +23,8 @@ import { deleteEvents } from "api/deleteSchedule/requests";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { CircularProgress } from "@mui/material";
+
 import * as XLSX from "xlsx";
 
 const Events = () => {
@@ -35,9 +37,11 @@ const Events = () => {
   const [selectedEvents, setSelectedEvents] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [eventsPerPage] = useState(15);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
+      setIsLoading(true);
       const subjectsResponse = await getSubjects();
       const eventsResponse = await getEvents();
 
@@ -59,6 +63,8 @@ const Events = () => {
       setEvents(enrichedEvents);
     } catch (error) {
       console.error("Error encountered:", error);
+    } finally {
+      setIsLoading(false); // End loading
     }
   }, []);
 
@@ -225,105 +231,123 @@ const Events = () => {
           <SaveAltIcon />
         </IconButton>
       </Typography>
-      <TextField
-        fullWidth
-        variant="outlined"
-        label="ძიება საგნის კოდით ან სახელით"
-        InputProps={{ endAdornment: <SearchIcon /> }}
-        onChange={handleSearchChange}
-        value={searchTerm}
-        sx={{ mb: 3 }}
-      />
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  indeterminate={
-                    Object.keys(selectedEvents).length > 0 &&
-                    Object.keys(selectedEvents).length < currentEvents.length
-                  }
-                  checked={
-                    currentEvents.length > 0 &&
-                    Object.keys(selectedEvents).length === currentEvents.length
-                  }
-                  onChange={handleSelectAllClick}
-                />
-              </TableCell>
-              <TableCell>საგნის კოდი</TableCell>
-              <TableCell>საგნის სახელი</TableCell>
-              <TableCell>კვირის დღე</TableCell>
-              <TableCell
-                style={{ cursor: "pointer" }}
-                onClick={() => sortEvents("startDate")}
-              >
-                დაწყების დრო{" "}
-                {sortDirection.startDate === "asc" ? (
-                  <ArrowUpwardIcon />
-                ) : (
-                  <ArrowDownwardIcon />
-                )}
-              </TableCell>
-              <TableCell
-                style={{ cursor: "pointer" }}
-                onClick={() => sortEvents("endDate")}
-              >
-                დასრულების დრო{" "}
-                {sortDirection.endDate === "asc" ? (
-                  <ArrowUpwardIcon />
-                ) : (
-                  <ArrowDownwardIcon />
-                )}
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {currentEvents.map((event) => (
-              <TableRow
-                key={event.eventId}
-                selected={isSelected(event.eventId)}
-              >
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={isSelected(event.eventId)}
-                    onChange={(e) => handleSelectClick(e, event.eventId)}
-                  />
-                </TableCell>
-                <TableCell>{event.subjectCode}</TableCell>
-                <TableCell>{event.subjectName}</TableCell>
-                <TableCell>
-                  {new Date(event.startDate).toLocaleDateString("en-US", {
-                    weekday: "long",
-                  })}
-                </TableCell>
-                <TableCell>
-                  {new Date(event.startDate).toLocaleString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(event.endDate).toLocaleString()}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        marginTop={2}
-      >
-        <Button disabled={currentPage <= 1} onClick={handlePreviousPage}>
-          <ArrowBackIcon />
-        </Button>
-        <Typography
-          sx={{ marginX: 2 }}
-        >{`${currentPage} / ${totalPages}`}</Typography>
-        <Button disabled={currentPage >= totalPages} onClick={handleNextPage}>
-          <ArrowForwardIcon />
-        </Button>
-      </Box>
+      {isLoading ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          sx={{ height: "calc(100vh - 200px)" }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <TextField
+            fullWidth
+            variant="outlined"
+            label="ძიება საგნის კოდით ან სახელით"
+            InputProps={{ endAdornment: <SearchIcon /> }}
+            onChange={handleSearchChange}
+            value={searchTerm}
+            sx={{ mb: 3 }}
+          />
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      indeterminate={
+                        Object.keys(selectedEvents).length > 0 &&
+                        Object.keys(selectedEvents).length <
+                          currentEvents.length
+                      }
+                      checked={
+                        currentEvents.length > 0 &&
+                        Object.keys(selectedEvents).length ===
+                          currentEvents.length
+                      }
+                      onChange={handleSelectAllClick}
+                    />
+                  </TableCell>
+                  <TableCell>საგნის კოდი</TableCell>
+                  <TableCell>საგნის სახელი</TableCell>
+                  <TableCell>კვირის დღე</TableCell>
+                  <TableCell
+                    style={{ cursor: "pointer" }}
+                    onClick={() => sortEvents("startDate")}
+                  >
+                    დაწყების დრო{" "}
+                    {sortDirection.startDate === "asc" ? (
+                      <ArrowUpwardIcon />
+                    ) : (
+                      <ArrowDownwardIcon />
+                    )}
+                  </TableCell>
+                  <TableCell
+                    style={{ cursor: "pointer" }}
+                    onClick={() => sortEvents("endDate")}
+                  >
+                    დასრულების დრო{" "}
+                    {sortDirection.endDate === "asc" ? (
+                      <ArrowUpwardIcon />
+                    ) : (
+                      <ArrowDownwardIcon />
+                    )}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {currentEvents.map((event) => (
+                  <TableRow
+                    key={event.eventId}
+                    selected={isSelected(event.eventId)}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={isSelected(event.eventId)}
+                        onChange={(e) => handleSelectClick(e, event.eventId)}
+                      />
+                    </TableCell>
+                    <TableCell>{event.subjectCode}</TableCell>
+                    <TableCell>{event.subjectName}</TableCell>
+                    <TableCell>
+                      {new Date(event.startDate).toLocaleDateString("en-US", {
+                        weekday: "long",
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(event.startDate).toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(event.endDate).toLocaleString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            marginTop={2}
+          >
+            <Button disabled={currentPage <= 1} onClick={handlePreviousPage}>
+              <ArrowBackIcon />
+            </Button>
+            <Typography
+              sx={{ marginX: 2 }}
+            >{`${currentPage} / ${totalPages}`}</Typography>
+            <Button
+              disabled={currentPage >= totalPages}
+              onClick={handleNextPage}
+            >
+              <ArrowForwardIcon />
+            </Button>
+          </Box>
+        </>
+      )}
     </Paper>
   );
 };
