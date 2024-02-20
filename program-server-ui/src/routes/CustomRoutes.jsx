@@ -8,6 +8,7 @@ import Home from "pages/Home/Home";
 import SiteWrapper from "components/Wrapper/Wrapper";
 import CreateSchedule from "pages/CreateSchedule/CreateSchedule";
 import Events from "pages/ScheduleEvent/Events";
+import SchedulerUsers from "pages/SchedulerUsers/schedulerUsers";
 
 const CustomRoutes = () => {
   return (
@@ -50,6 +51,16 @@ const CustomRoutes = () => {
             <Protected>
               <SiteWrapper>
                 <Events />
+              </SiteWrapper>
+            </Protected>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <Protected>
+              <SiteWrapper>
+                <SchedulerUsers />
               </SiteWrapper>
             </Protected>
           }

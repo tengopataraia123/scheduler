@@ -10,3 +10,12 @@ export const deleteEvents = (eventIds) => {
     },
   });
 };
+
+export const deleteUsers = (userIds) => {
+  return axios.post(`${apiUrl}/SchedulerUSer/DeleteUsers`, userIds, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};

@@ -9,6 +9,7 @@ import {
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FormatListBulleted, Poll, TableChart } from "@mui/icons-material";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 
 const SidebarList = () => {
   const { pathname } = useLocation();
@@ -64,6 +65,33 @@ const SidebarList = () => {
           <ListItemText primary="განრიგი" sx={{ opacity: open ? 1 : 0 }} />
         </ListItemButton>
       </ListItem>
+
+      <ListItem disablePadding sx={{ display: "block" }}>
+        <ListItemButton
+          onClick={() => navigate("/users")}
+          selected={pathname === "/users"}
+          sx={{
+            minHeight: 48,
+            justifyContent: open ? "initial" : "center",
+            px: 2.5,
+          }}
+        >
+          <ListItemIcon
+            sx={{
+              minWidth: 0,
+              mr: open ? 3 : "auto",
+              justifyContent: "center",
+            }}
+          >
+            <PeopleAltIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="მომხმარებლები"
+            sx={{ opacity: open ? 1 : 0 }}
+          />
+        </ListItemButton>
+      </ListItem>
+
       <ListItem disablePadding sx={{ display: "block" }}>
         <ListItemButton
           selected={pathname === "/"}
