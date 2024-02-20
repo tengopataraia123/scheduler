@@ -19,3 +19,12 @@ export const deleteUsers = (userIds) => {
     },
   });
 };
+
+export const deleteSubjects = (subjectIds) => {
+  return axios.post(`${apiUrl}/Subject/DeleteSubjects`, subjectIds, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};

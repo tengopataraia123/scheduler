@@ -10,6 +10,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FormatListBulleted, Poll, TableChart } from "@mui/icons-material";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 
 const SidebarList = () => {
   const { pathname } = useLocation();
@@ -89,6 +90,29 @@ const SidebarList = () => {
             primary="მომხმარებლები"
             sx={{ opacity: open ? 1 : 0 }}
           />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem disablePadding sx={{ display: "block" }}>
+        <ListItemButton
+          onClick={() => navigate("/subjects")}
+          selected={pathname === "/subjects"}
+          sx={{
+            minHeight: 48,
+            justifyContent: open ? "initial" : "center",
+            px: 2.5,
+          }}
+        >
+          <ListItemIcon
+            sx={{
+              minWidth: 0,
+              mr: open ? 3 : "auto",
+              justifyContent: "center",
+            }}
+          >
+            <TextSnippetIcon />
+          </ListItemIcon>
+          <ListItemText primary="საგნები" sx={{ opacity: open ? 1 : 0 }} />
         </ListItemButton>
       </ListItem>
 

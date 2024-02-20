@@ -253,7 +253,14 @@ const Events = () => {
           />
           <TableContainer component={Paper}>
             <Table>
-              <TableHead>
+              <TableHead
+                sx={{
+                  "& .MuiTableCell-head": {
+                    fontWeight: "bold",
+                    backgroundColor: "rgba(0, 0, 0, 0.1)",
+                  },
+                }}
+              >
                 <TableRow>
                   <TableCell padding="checkbox">
                     <Checkbox
