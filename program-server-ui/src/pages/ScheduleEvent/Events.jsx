@@ -20,7 +20,9 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getSubjects, getEvents } from "api/getSchedule/requests";
 import { deleteEvents } from "api/deleteSchedule/requests";
-import SaveAltIcon from "@mui/icons-material/SaveAlt"; // Import an icon for Excel export
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import * as XLSX from "xlsx";
 
 const Events = () => {
@@ -48,9 +50,9 @@ const Events = () => {
         const subject = subjectsMap[event.subjectId];
         return {
           ...event,
-          subjectName: subject ? subject.name : "Unknown",
+          subjectName: subject ? subject.name : "ვერ მოიძებნა",
           subjectCode: subject ? subject.code : "N/A",
-          subjectId: event.subjectId, // Include the subject ID
+          subjectId: event.subjectId,
         };
       });
 
@@ -58,7 +60,7 @@ const Events = () => {
     } catch (error) {
       console.error("Error encountered:", error);
     }
-  }, []); // If fetchData depends on props or state, include them in this dependency array
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -66,8 +68,8 @@ const Events = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page on search change
-    setSelectedEvents({}); // Clear selections when search criteria changes
+    setCurrentPage(1);
+    setSelectedEvents({});
   };
 
   const filteredEvents = events.filter(
@@ -89,7 +91,6 @@ const Events = () => {
     }));
   };
 
-  // Pagination logic
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(
@@ -114,14 +115,12 @@ const Events = () => {
     );
 
     if (areAllFilteredSelected) {
-      // If all filtered are currently selected, deselect them
       const newSelectedEvents = { ...selectedEvents };
       allFilteredEventIds.forEach((id) => {
         delete newSelectedEvents[id];
       });
       setSelectedEvents(newSelectedEvents);
     } else {
-      // If not all filtered are selected, select all filtered
       const newSelectedEvents = { ...selectedEvents };
       allFilteredEventIds.forEach((id) => {
         newSelectedEvents[id] = true;
@@ -141,26 +140,22 @@ const Events = () => {
   const isSelected = (eventId) => !!selectedEvents[eventId];
 
   const handleDeleteSelected = async () => {
-    const selectedSubjectIds = Object.keys(selectedEvents)
+    const selectedEventIds = Object.keys(selectedEvents)
       .filter((key) => selectedEvents[key])
-      .map(
-        (key) => events.find((event) => event.subjectCode === key)?.subjectId
-      ) // Map subjectCode to subjectId
-      .filter((id) => id !== undefined); // Ensure undefined IDs are removed
+      .map((key) => parseInt(key));
 
-    if (selectedSubjectIds.length === 0) {
-      alert("No events selected for deletion.");
+    if (selectedEventIds.length === 0) {
+      alert("ჩანაწერი არაა მონიშნული!");
       return;
     }
 
     try {
-      await deleteEvents(selectedSubjectIds);
-      alert("Selected events successfully deleted.");
+      await deleteEvents(selectedEventIds);
+      alert("ჩანაწერები წაიშალა.");
       setSelectedEvents({});
-      fetchData(); // Re-fetch the events
+      fetchData();
     } catch (error) {
-      console.error("Error deleting events:", error);
-      alert("Failed to delete selected events.");
+      alert("ვერ მოხერხდა ჩანაწერების წაშლა");
     }
   };
 
@@ -169,7 +164,7 @@ const Events = () => {
       (key) => selectedEvents[key]
     );
     if (selectedEventIds.length === 0) {
-      alert("Please select at least one event to export.");
+      alert("ექსელში ეხპორტისთვის მონიშნეთ ჩანაწერი!");
       return;
     }
 
@@ -178,38 +173,38 @@ const Events = () => {
     );
 
     if (eventsToExport.length === 0) {
-      alert("No events found to export.");
+      alert("ვერ მოიძებნა ჩანაწერი");
       return;
     }
 
     const worksheet = XLSX.utils.json_to_sheet(
       eventsToExport.map((event) => ({
-        "Event ID": event.eventId,
-        "Subject Code": event.subjectCode || "N/A",
-        "Subject Name": event.subjectName,
-        "Start Time": event.startDate,
-        "End Time": event.endDate,
+        "#": event.eventId,
+        "საგნის კოდი": event.subjectCode || "N/A",
+        "საგნის სახელი": event.subjectName,
+        "დაწყების დრო": event.startDate,
+        "დასრულების დრო": event.endDate,
       }))
     );
 
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Events");
-    XLSX.writeFile(workbook, "events_export.xlsx");
+    XLSX.writeFile(workbook, "განრიგი.xlsx");
   };
 
   return (
     <Paper sx={{ p: 2 }}>
       <Typography variant="h4" sx={{ mb: 4 }}>
-        Events
+        განრიგი
         <IconButton
           color="error"
           onClick={handleDeleteSelected}
           size="medium"
           sx={{
-            ml: 3, // Adjust spacing as needed
-            transition: "box-shadow 0.3s ease-in-out", // Smooth transition for shadow
+            ml: 3,
+            transition: "box-shadow 0.3s ease-in-out",
             "&:hover": {
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Subtle grey shadow
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
             },
           }}
         >
@@ -220,20 +215,20 @@ const Events = () => {
           onClick={exportToExcel}
           size="medium"
           sx={{
-            ml: 0.2, // Adjust spacing as needed
-            transition: "box-shadow 0.3s ease-in-out", // Smooth transition for shadow
+            ml: 0.2,
+            transition: "box-shadow 0.3s ease-in-out",
             "&:hover": {
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Subtle grey shadow on hover
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
             },
           }}
         >
-          <SaveAltIcon /> {/* This icon represents Excel export */}
+          <SaveAltIcon />
         </IconButton>
       </Typography>
       <TextField
         fullWidth
         variant="outlined"
-        label="Search by Subject Name or Code"
+        label="ძიება საგნის კოდით ან სახელით"
         InputProps={{ endAdornment: <SearchIcon /> }}
         onChange={handleSearchChange}
         value={searchTerm}
@@ -256,14 +251,14 @@ const Events = () => {
                   onChange={handleSelectAllClick}
                 />
               </TableCell>
-              <TableCell>Subject Code</TableCell>
-              <TableCell>Subject Name</TableCell>
-              <TableCell>Weekday</TableCell>
+              <TableCell>საგნის კოდი</TableCell>
+              <TableCell>საგნის სახელი</TableCell>
+              <TableCell>კვირის დღე</TableCell>
               <TableCell
                 style={{ cursor: "pointer" }}
                 onClick={() => sortEvents("startDate")}
               >
-                Start Time{" "}
+                დაწყების დრო{" "}
                 {sortDirection.startDate === "asc" ? (
                   <ArrowUpwardIcon />
                 ) : (
@@ -274,7 +269,7 @@ const Events = () => {
                 style={{ cursor: "pointer" }}
                 onClick={() => sortEvents("endDate")}
               >
-                End Time{" "}
+                დასრულების დრო{" "}
                 {sortDirection.endDate === "asc" ? (
                   <ArrowUpwardIcon />
                 ) : (
@@ -320,13 +315,13 @@ const Events = () => {
         marginTop={2}
       >
         <Button disabled={currentPage <= 1} onClick={handlePreviousPage}>
-          Previous
+          <ArrowBackIcon />
         </Button>
         <Typography
           sx={{ marginX: 2 }}
-        >{`Page ${currentPage} of ${totalPages}`}</Typography>
+        >{`${currentPage} / ${totalPages}`}</Typography>
         <Button disabled={currentPage >= totalPages} onClick={handleNextPage}>
-          Next
+          <ArrowForwardIcon />
         </Button>
       </Box>
     </Paper>

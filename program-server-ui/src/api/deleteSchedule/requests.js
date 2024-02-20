@@ -2,11 +2,10 @@ import axios from "axios";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-export const deleteEvents = (subjectIds) => {
-  const queryString = subjectIds.map((id) => `subjectIds=${id}`).join("&");
-
-  return axios.delete(`${apiUrl}/Event/DeleteBySubjectIds?${queryString}`, {
+export const deleteEvents = (eventIds) => {
+  return axios.post(`${apiUrl}/Event/DeleteEvents`, eventIds, {
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   });
