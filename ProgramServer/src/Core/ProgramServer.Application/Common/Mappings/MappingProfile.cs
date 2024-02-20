@@ -19,7 +19,10 @@ namespace ProgramServer.Application.Common.Mappings
             CreateMap<Role, RoleModel>().ReverseMap();
             CreateMap<SubjectUser, UserCreateModel>().ReverseMap();
             CreateMap<User, UserCreateModel>().ReverseMap();
-            CreateMap<User, UserGetModel>().ReverseMap();
+            CreateMap<User, UserGetModel>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+                .ReverseMap();
+
             CreateMap<Survey, SurveyModel>().ReverseMap();
             CreateMap<Response, ResponseModel>().ReverseMap();
             CreateMap<Event, EventCreateModel>().ReverseMap();
