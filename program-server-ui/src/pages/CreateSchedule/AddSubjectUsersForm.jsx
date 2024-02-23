@@ -108,6 +108,8 @@ const AddSubjectUsersForm = () => {
     const subjectUsersData = selectedStudents.map((userEmail) => ({
       subjectCode: selectedSubject,
       userEmail: userEmail,
+      subjectId: 0,
+      userId: 0,
     }));
 
     try {
