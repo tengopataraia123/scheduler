@@ -95,8 +95,6 @@ const AddStudentsForm = () => {
           allSheetsData = allSheetsData.concat(formattedSheetData);
         }
       });
-
-      // Directly set the imported data, removing any initial empty entry
       if (allSheetsData.length > 0) {
         formik.setFieldValue("students", allSheetsData);
       }
