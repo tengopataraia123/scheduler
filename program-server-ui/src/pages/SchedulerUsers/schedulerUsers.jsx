@@ -141,7 +141,6 @@ const SchedulerUsers = () => {
 
     const worksheet = XLSX.utils.json_to_sheet(
       usersToExport.map((user) => ({
-        "#": user.userId,
         სახელი: user.firstName,
         გვარი: user.lastName,
         "ელ. ფოსტა": user.email,
