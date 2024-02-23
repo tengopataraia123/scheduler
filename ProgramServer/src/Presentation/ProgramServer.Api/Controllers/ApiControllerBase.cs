@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using ProgramServer.Application.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using ProgramServer.Application.Repository;
-using ProgramServer.Domain.Roles;
 
 namespace ProgramServer.Api.Controllers
 {

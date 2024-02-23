@@ -17,7 +17,7 @@ namespace ProgramServer.Api.Controllers.Subject
             _subjectService = subjectService;
         }
 
-        [HttpPost("Create")]
+        [HttpPost("CreateSubject")]
         //[Authorize(Roles = "admin,coordinator")]
         public async Task<ActionResult> CreateSubject([FromBody] SubjectCreateModel subjectModel)
         {
@@ -25,7 +25,7 @@ namespace ProgramServer.Api.Controllers.Subject
             return Ok();
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("AddSubjectUsers")]
         //[Authorize(Roles = "admin,coordinator")]
         public async Task<IActionResult> AddSubjectUsers([FromBody] List<SubjectUserModel> subjectUsers)
         {
@@ -33,13 +33,7 @@ namespace ProgramServer.Api.Controllers.Subject
             return Ok();
         }
 
-        [HttpGet("GetSubjects")]
-        public async Task<IActionResult> GetSubjectsByUser()
-        {
-            var subjects = await _subjectService.GetSubjectsByUserId(CurrentUser.Id);
 
-            return Ok(subjects);
-        }
 
         [HttpGet("GetAllSubjects")]
         public async Task<ActionResult<List<SubjectGetModel>>> GetAllSubjects()
@@ -48,19 +42,20 @@ namespace ProgramServer.Api.Controllers.Subject
             return Ok(subjects);
         }
 
-        //[HttpGet("Find/{id}")]
-        //public async Task<ActionResult<SubjectModel>> FindSubject([FromRoute] int id)
-        //{
-        //    var subject = await _subjectService.FindSubject(id);
-        //    return Ok(subject);
-        //}
+        [HttpGet("GetAllSubjectUsers/{subjectCode}")]
+        public async Task<ActionResult<List<SubjectUserModel>>> GetAllSubjectUsers([FromRoute] string subjectCode)
+        {
+            var subjects = await _subjectService.GetUsersBySubjectCode(subjectCode);
+            return Ok(subjects);
+        }
 
-        //[HttpDelete("Delete/{id}")]
-        //public async Task<ActionResult> DeleteSubject([FromRoute] int id)
-        //{
-        //    await _subjectService.DeleteSubject(id);
-        //    return Ok();
-        //}
+
+        [HttpDelete("DeleteSubject")]
+        public async Task<ActionResult> DeleteSubject([FromRoute] string subjectCode)
+        {
+            await _subjectService.DeleteSubject(subjectCode);
+            return Ok();
+        }
     }
 }
 

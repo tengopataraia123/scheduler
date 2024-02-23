@@ -77,10 +77,10 @@ namespace ProgramServer.Application.Services.Users
             return _mapper.Map<List<UserGetModel>>(allusers);
         }
 
-        //public async Task Delete(int id)
-        //{
-        //    await _userRepository.Delete(o => o.Id == id);
-        //}
+        public async Task Delete(int id)
+        {
+            await _userRepository.Delete(o => o.Id == id);
+        }
 
     }
 }

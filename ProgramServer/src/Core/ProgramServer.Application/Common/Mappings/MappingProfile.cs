@@ -15,9 +15,10 @@ namespace ProgramServer.Application.Common.Mappings
 	{
         public MappingProfile()
         {
-            CreateMap<Attendance, AttendanceModel>().ReverseMap();
-            CreateMap<Role, RoleModel>().ReverseMap();
             CreateMap<SubjectUser, UserCreateModel>().ReverseMap();
+            CreateMap<SubjectUser, SubjectUserModel>()
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email)); 
+
             CreateMap<User, UserCreateModel>().ReverseMap();
             CreateMap<User, UserGetModel>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
@@ -43,7 +44,8 @@ namespace ProgramServer.Application.Common.Mappings
                 .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<SubjectUserModel, SubjectUser>().ReverseMap();
+            CreateMap<Role, RoleModel>().ReverseMap();
+            CreateMap<Attendance, AttendanceModel>().ReverseMap();
         }
     }
 }

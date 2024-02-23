@@ -37,12 +37,12 @@ namespace ProgramServer.Api.Controllers.User
             return Ok(users);
         }
 
-        //[HttpDelete("Delete/{id}")]
-        //public async Task<ActionResult> Delete([FromRoute] int id)
-        //{
-        //    await _userService.Delete(id);
-        //    return Ok();
-        //}
+        [HttpDelete("DeleteUser")]
+        public async Task<ActionResult> DeleteUser([FromRoute] int userId)
+        {
+            await _userService.Delete(userId);
+            return Ok();
+        }
     }
 }
 

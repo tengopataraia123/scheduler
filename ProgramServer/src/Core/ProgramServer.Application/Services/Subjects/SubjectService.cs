@@ -97,26 +97,32 @@ namespace ProgramServer.Application.Services.Subjects
             }
         }
 
-
-        public async Task<List<SubjectGetModel>> GetSubjectsByUserId(int userId)
+        public async Task<List<SubjectUserModel>> GetUsersBySubjectCode(string subjectCode)
         {
-            var subjects = await _subjectRepository.GetAll().Where(x => x.SubjectUsers.Any(s => s.UserId == userId))
-                .Include(s => s.Events)
+            var subjects = await _subjectRepository.Where(x => x.Code == subjectCode)
                 .Include(a => a.SubjectUsers)
+                .ThenInclude(u=>u.User)
                 .ToListAsync();
 
             if (subjects == null)
             {
-                throw new NotFoundException(nameof(Subject), userId);
+                throw new NotFoundException(nameof(Subject), subjectCode);
             }
 
-            return _mapper.Map<List<SubjectGetModel>>(subjects);
+            var subjectUsers = subjects.SelectMany(s => s.SubjectUsers).ToList();
+
+            return _mapper.Map<List<SubjectUserModel>>(subjectUsers);
         }
 
         public async Task<List<SubjectGetModel>> GetAllSubjects()
         {
             var allusers = await _subjectRepository.GetAll().ToListAsync();
             return _mapper.Map<List<SubjectGetModel>>(allusers);
+        }
+
+        public Task DeleteSubject(string subjectCode)
+        {
+            throw new NotImplementedException();
         }
 
         private void GenerateBluetoothCodes(IEnumerable<Event> eventEntities, User user)
@@ -166,6 +172,7 @@ namespace ProgramServer.Application.Services.Subjects
 
             return result.ToString();
         }
+
     }
 }
 

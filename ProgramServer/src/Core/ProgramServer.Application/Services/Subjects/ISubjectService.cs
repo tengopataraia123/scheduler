@@ -7,10 +7,9 @@ namespace ProgramServer.Application.Services.Subjects
     {
         Task CreateSubject(SubjectCreateModel subject);
         Task AddSubjectUsers(List<SubjectUserModel> subjectUser);
-        Task<List<SubjectGetModel>> GetSubjectsByUserId(int id);
         Task<List<SubjectGetModel>> GetAllSubjects();
-        //Task<SubjectModel> FindSubject(int id);
-        //Task DeleteSubject(int id);
+        Task<List<SubjectUserModel>> GetUsersBySubjectCode(string subjectCode);
+        Task DeleteSubject(string subjectCode);
     }
 }
 
