@@ -17,7 +17,7 @@ const CustomRoutes = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route
-          path="/"
+          path="/survey"
           element={
             <Protected>
               <SiteWrapper>
@@ -37,7 +37,7 @@ const CustomRoutes = () => {
           }
         />
         <Route
-          path="/schedule"
+          path="/"
           element={
             <Protected>
               <SiteWrapper>
