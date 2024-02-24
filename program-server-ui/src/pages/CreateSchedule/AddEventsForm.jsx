@@ -110,7 +110,7 @@ const AddEventsForm = () => {
               name="applySubjectCodeToAll"
             />
           }
-          label="საგნის კოდის დუბლირება"
+          label="დაამატეთ საგნის კოდი ყველა ლექციისთვის"
         />
         <FormControlLabel
           control={
@@ -120,10 +120,9 @@ const AddEventsForm = () => {
               name="recurring"
             />
           }
-          label="განრიგის ავტომატური შევსება"
+          label="გამეორებადი ლექციების გენერაცია"
         />
         {recurring ? (
-          // Render AddRecurringEvents component when recurring is true
           <AddRecurringEvents formik={formik} />
         ) : (
           <FieldArray

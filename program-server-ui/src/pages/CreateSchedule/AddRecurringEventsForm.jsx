@@ -155,8 +155,6 @@ const AddRecurringEvents = ({ formik }) => {
             </TableBody>
           </Table>
         </Grid>
-
-        {/* Days under End Date */}
         <Grid item xs={6}>
           <Table size="small" sx={{ marginLeft: "auto", marginRight: 0 }}>
             <TableHead>
@@ -172,7 +170,7 @@ const AddRecurringEvents = ({ formik }) => {
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={day.isChecked}
-                      onChange={() => handleCheckboxChange(index + 4)} // Adjust index for the last 3 days
+                      onChange={() => handleCheckboxChange(index + 4)}
                     />
                     {day.name}
                   </TableCell>
@@ -182,7 +180,7 @@ const AddRecurringEvents = ({ formik }) => {
                       value={day.startHour}
                       onChange={(e) =>
                         handleHourChange(index + 4, "startHour", e.target.value)
-                      } // Adjust index for the last 3 days
+                      }
                       disabled={!day.isChecked}
                       InputLabelProps={{ shrink: true }}
                       inputProps={{ step: 60 }}
@@ -195,7 +193,7 @@ const AddRecurringEvents = ({ formik }) => {
                       value={day.endHour}
                       onChange={(e) =>
                         handleHourChange(index + 4, "endHour", e.target.value)
-                      } // Adjust index for the last 3 days
+                      }
                       disabled={!day.isChecked}
                       InputLabelProps={{ shrink: true }}
                       inputProps={{ step: 60 }}
