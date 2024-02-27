@@ -24,6 +24,7 @@ namespace ProgramServer.Application.Services.Events
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<SubjectUser> _subjectUserRepository;
         private readonly IRepository<BluetoothCode> _bluetoothCodeRepository;
+        private readonly IRepository<Attendance> _attendanceRepository;
         private readonly IMapper _mapper;
 
         public EventService(IRepository<Event> eventRepository,
@@ -31,6 +32,7 @@ namespace ProgramServer.Application.Services.Events
             IRepository<User> userRepository,
             IRepository<SubjectUser> subjectUserRepository,
             IRepository<BluetoothCode> bluetoothCodeRepository,
+            IRepository<Attendance> attendanceRepository,
             IMapper mapper)
         {
             _eventRepository = eventRepository;
@@ -39,6 +41,7 @@ namespace ProgramServer.Application.Services.Events
             _userRepository = userRepository;
             _subjectUserRepository = subjectUserRepository;
             _bluetoothCodeRepository = bluetoothCodeRepository;
+            _attendanceRepository = attendanceRepository;
         }
 
         public async Task<int> Add(EventCreateModel eventModel)
@@ -108,20 +111,31 @@ namespace ProgramServer.Application.Services.Events
 
 
 
-        private void GenerateBluetoothCodes(int eventId,DateTime startDate, DateTime endTime, List<User> user)
+        private void GenerateBluetoothCodes(int eventId,DateTime startDate, DateTime endTime, List<User> users)
         {
             var bluetoothCodes = new List<BluetoothCode>();
-
-            for (var time = startDate; time <= endTime; time = time.AddMinutes(20))
+            
+            foreach (var user in users)
             {
                 var code = GenerateUniqueCode(bluetoothCodes);
-                bluetoothCodes.Add(new BluetoothCode
+                var attendance = new Attendance
                 {
-                    Code = code,
-                    ActivationTime = time,
-                });
+                    UserId = user.Id,
+                    EventId = eventId,
+                }; 
+                
+                for (var time = startDate; time <= endTime; time = time.AddMinutes(20))
+                {
+                    bluetoothCodes.Add(new BluetoothCode
+                    {
+                        Code = code,
+                        ActivationTime = time,
+                        AttendanceId = attendance.Id
+                    });
+                }
+                _attendanceRepository.Add(attendance);
+                _bluetoothCodeRepository.AddRange(bluetoothCodes);
             }
-            _bluetoothCodeRepository.AddRange(bluetoothCodes);
         }
 
         private string GenerateUniqueCode(List<BluetoothCode> bluetoothCodes, int counter = 0)
