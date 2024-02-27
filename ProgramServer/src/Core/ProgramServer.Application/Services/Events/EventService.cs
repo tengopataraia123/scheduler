@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 using ProgramServer.Domain.Attendances;
 using ProgramServer.Domain.Users;
+using System.Diagnostics.Tracing;
 
 namespace ProgramServer.Application.Services.Events
 {
@@ -20,18 +21,27 @@ namespace ProgramServer.Application.Services.Events
     { 
         private readonly IRepository<Event> _eventRepository;
         private readonly IRepository<Subject> _subjectRepository;
+        private readonly IRepository<User> _userRepository;
+        private readonly IRepository<SubjectUser> _subjectUserRepository;
+        private readonly IRepository<BluetoothCode> _bluetoothCodeRepository;
         private readonly IMapper _mapper;
 
         public EventService(IRepository<Event> eventRepository,
             IRepository<Subject> subjectRepository,
+            IRepository<User> userRepository,
+            IRepository<SubjectUser> subjectUserRepository,
+            IRepository<BluetoothCode> bluetoothCodeRepository,
             IMapper mapper)
         {
             _eventRepository = eventRepository;
             _subjectRepository = subjectRepository;
             _mapper = mapper;
+            _userRepository = userRepository;
+            _subjectUserRepository = subjectUserRepository;
+            _bluetoothCodeRepository = bluetoothCodeRepository;
         }
 
-        public async Task Add(EventCreateModel eventModel)
+        public async Task<int> Add(EventCreateModel eventModel)
         {
             var validator = new EventCreateModelValidator();
             var result = validator.Validate(eventModel);
@@ -51,15 +61,17 @@ namespace ProgramServer.Application.Services.Events
             var subjectUsers = await _subjectRepository.Where(o => o.Id == subject.Id)
                 .Include(o => o.SubjectUsers)
                 .ThenInclude(o => o.User).FirstOrDefaultAsync();
-
+ 
             var users = subjectUsers.SubjectUsers.Select(o => o.User).ToList();
 
             _eventRepository.Add(eventEntity);
             await _eventRepository.SaveAsync();
+            return eventEntity.Id;
         }
 
         public async Task AddEvents(List<EventCreateModel> events)
         {
+            var users = await _subjectUserRepository.Where(o => o.SubjectId == events.First().SubjectId).Include(o => o.User).Select(o => o.User).ToListAsync();
             var validator = new EventCreateModelValidator();
             foreach (var eventModel in events)
             {
@@ -70,10 +82,13 @@ namespace ProgramServer.Application.Services.Events
 
                 //var eventEntity = _mapper.Map<Event>(eventModel);
 
-                await Add(eventModel);
+                var eventId = await Add(eventModel);
 
                 //await _eventRepository.SaveAsync();
+                GenerateBluetoothCodes(eventId,eventModel.StartDate,eventModel.EndDate, users);
             }
+                            
+            await _bluetoothCodeRepository.SaveAsync();
         }
 
         public async Task<List<EventGetModel>> GetAll()
@@ -89,6 +104,45 @@ namespace ProgramServer.Application.Services.Events
         public async Task DeleteEvents(List<int> eventIds)
         {
             await _eventRepository.Delete(o=> eventIds.Contains(o.Id));
+        }
+
+
+
+        private void GenerateBluetoothCodes(int eventId,DateTime startDate, DateTime endTime, List<User> user)
+        {
+            var bluetoothCodes = new List<BluetoothCode>();
+
+            for (var time = startDate; time <= endTime; time = time.AddMinutes(20))
+            {
+                var code = GenerateUniqueCode(bluetoothCodes);
+                bluetoothCodes.Add(new BluetoothCode
+                {
+                    Code = code,
+                    ActivationTime = time,
+                });
+            }
+            _bluetoothCodeRepository.AddRange(bluetoothCodes);
+        }
+
+        private string GenerateUniqueCode(List<BluetoothCode> bluetoothCodes, int counter = 0)
+        {
+            if (counter == 10)
+                throw new Exception("Can't Generate bluetooth codes");
+
+            char[] symbols = "1234567890".ToArray();
+
+            var result = new StringBuilder(5);
+
+            for (var i = 0; i < 8; i++)
+            {
+                var index = RandomNumberGenerator.GetInt32(symbols.Length);
+                result.Append(symbols[index]);
+            }
+
+            if (bluetoothCodes.Any(o => o.Code == result.ToString()))
+                return GenerateUniqueCode(bluetoothCodes, counter++);
+
+            return result.ToString();
         }
     }
 }

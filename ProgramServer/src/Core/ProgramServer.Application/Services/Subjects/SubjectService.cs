@@ -88,12 +88,6 @@ namespace ProgramServer.Application.Services.Subjects
                 var entity = _mapper.Map<SubjectUser>(subjectUser);
                 _subjectUserRepository.Add(entity);
                 await _subjectUserRepository.SaveAsync();
-
-                var events = await _eventRepository.Where(o => o.SubjectId == subjectUser.SubjectId).ToListAsync();
-                var user = await _userRepository.Where(o => o.Id == subjectUser.UserId).FirstOrDefaultAsync();
-
-                GenerateBluetoothCodes(events, user);
-                await _bluetoothCodeRepository.SaveAsync();
             }
         }
 
@@ -123,54 +117,6 @@ namespace ProgramServer.Application.Services.Subjects
         public Task DeleteSubject(string subjectCode)
         {
             throw new NotImplementedException();
-        }
-
-        private void GenerateBluetoothCodes(IEnumerable<Event> eventEntities, User user)
-        {
-            var bluetoothCodes = new List<BluetoothCode>();
-
-            foreach(var eventEntity in eventEntities)
-            {
-                var attendance = new Attendance()
-                {
-                    Event = eventEntity,
-                    User = user
-                };
-
-                for (var time = eventEntity.StartDate; time <= eventEntity.EndDate;time =  time.AddMinutes(20)) {
-                    var code = GenerateUniqueCode(bluetoothCodes);
-                    bluetoothCodes.Add(new BluetoothCode
-                    {
-                        Code = code,
-                        ActivationTime = time,
-                        Attendance = attendance
-                    });
-                }
-
-                _attendanceRepository.Add(attendance);
-            }
-            _bluetoothCodeRepository.AddRange(bluetoothCodes);
-        }
-
-        private string GenerateUniqueCode(List<BluetoothCode> bluetoothCodes,int counter = 0)
-        {
-            if (counter == 10)
-                throw new Exception("Can't Generate bluetooth codes");
-
-            char[] symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToArray();
-
-            var result = new StringBuilder(5);
-
-            for (var i = 0; i < 5; i++)
-            {
-                var index = RandomNumberGenerator.GetInt32(symbols.Length);
-                result.Append(symbols[index]);
-            }
-
-            if(bluetoothCodes.Any(o=>o.Code == result.ToString()))
-                return GenerateUniqueCode(bluetoothCodes,counter++);
-
-            return result.ToString();
         }
 
     }
