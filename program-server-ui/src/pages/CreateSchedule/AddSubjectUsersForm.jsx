@@ -8,12 +8,15 @@ import {
   Chip,
   InputAdornment,
   Tooltip,
+  IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Search } from "@mui/icons-material";
 import { getSubjects, getUsers } from "api/getSchedule/requests";
 import { postAddSubjectUsers } from "api/createSchedule/requests";
 import { toast } from "react-toastify";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import * as XLSX from "xlsx";
 
 const AddSubjectUsersForm = () => {
   const [subjects, setSubjects] = useState([]);
@@ -105,6 +108,8 @@ const AddSubjectUsersForm = () => {
     const subjectUsersData = selectedStudents.map((userEmail) => ({
       subjectCode: selectedSubject,
       userEmail: userEmail,
+      subjectId: 0,
+      userId: 0,
     }));
 
     try {
@@ -122,10 +127,46 @@ const AddSubjectUsersForm = () => {
     }
   };
 
+  const handleImportExcel = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0]; // Assuming the first sheet for demonstration
+      if (!sheetName) {
+        toast.error("No subject code found in the Excel file.");
+        return;
+      }
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+      const studentEmails = json
+        .map((item) => item["ელ. ფოსტა"])
+        .filter(Boolean);
+
+      setSelectedSubject(sheetName);
+      setSelectedStudents(studentEmails);
+      setAllStudents(studentEmails);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   return (
     <form>
       <Typography variant="h6" sx={{ mb: 2 }}>
         საგანზე სტუდენტი და ლექტორი დაამატეთ მხოლოდ განრიგის შექმნის შემდეგ
+        <label htmlFor="import-excel">
+          <input
+            accept=".xlsx, .xls"
+            id="import-excel"
+            type="file"
+            hidden
+            onChange={handleImportExcel}
+          />
+          <IconButton color="success" component="span" sx={{ ml: 0.5 }}>
+            <UploadFileIcon />
+          </IconButton>
+        </label>
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={8}>

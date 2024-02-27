@@ -20,8 +20,8 @@ const SidebarList = () => {
     <List>
       <ListItem disablePadding sx={{ display: "block" }}>
         <ListItemButton
-          onClick={() => navigate("/schedule")}
-          selected={pathname === "/schedule"}
+          onClick={() => navigate("/")}
+          selected={pathname === "/"}
           sx={{
             minHeight: 48,
             justifyContent: open ? "initial" : "center",
@@ -118,8 +118,8 @@ const SidebarList = () => {
 
       <ListItem disablePadding sx={{ display: "block" }}>
         <ListItemButton
-          selected={pathname === "/"}
-          onClick={() => navigate("/")}
+          selected={pathname === "/survey"}
+          onClick={() => navigate("/survey")}
           sx={{
             minHeight: 48,
             justifyContent: open ? "initial" : "center",

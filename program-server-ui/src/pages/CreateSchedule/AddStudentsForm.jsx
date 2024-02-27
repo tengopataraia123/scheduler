@@ -14,6 +14,8 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import * as yup from "yup";
 import { postAddStudent } from "api/createSchedule/requests";
 import { toast } from "react-toastify";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import * as XLSX from "xlsx";
 
 const initialValues = {
   students: [
@@ -65,11 +67,57 @@ const AddStudentsForm = () => {
     },
   });
 
+  const handleImportExcel = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      let allSheetsData = [];
+
+      workbook.SheetNames.forEach((sheetName) => {
+        const worksheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(worksheet);
+        if (json.length > 0) {
+          const formattedSheetData = json.map((item) => ({
+            firstName: item["სახელი"] || "",
+            lastName: item["გვარი"] || "",
+            email: item["ელ. ფოსტა"] || "",
+            roleId:
+              item["როლი"] === "სტუდენტი"
+                ? 1
+                : item["როლი"] === "ლექტორი"
+                ? 2
+                : null,
+            password: "",
+          }));
+          allSheetsData = allSheetsData.concat(formattedSheetData);
+        }
+      });
+      if (allSheetsData.length > 0) {
+        formik.setFieldValue("students", allSheetsData);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   return (
     <FormikProvider value={formik}>
       <form onSubmit={formik.handleSubmit}>
         <Typography variant="h6" sx={{ mb: 2 }}>
           პროგრამაში მომხმარებლების დამატება
+          <label htmlFor="import-excel">
+            <input
+              accept=".xlsx, .xls"
+              id="import-excel"
+              type="file"
+              hidden
+              onChange={handleImportExcel}
+            />
+            <IconButton color="success" component="span" sx={{ ml: 0.5 }}>
+              <UploadFileIcon />
+            </IconButton>
+          </label>
         </Typography>
         <FieldArray
           name="students"
