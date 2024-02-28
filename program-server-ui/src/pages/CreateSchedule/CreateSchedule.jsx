@@ -34,10 +34,10 @@ const CreateSchedule = () => {
           >
             <MenuItem value="AddSubject"> საგანი</MenuItem>
             <MenuItem value="AddStudent"> მომხმარებლები</MenuItem>
-            <MenuItem value="AddEvent"> განრიგი</MenuItem>
             <MenuItem value="AddSubjectStudents">
               საგანი & მომხმარებელი
             </MenuItem>
+            <MenuItem value="AddEvent"> განრიგი</MenuItem>
           </Select>
         </FormControl>
       </Box>

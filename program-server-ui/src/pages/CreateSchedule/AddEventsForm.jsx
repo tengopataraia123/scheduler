@@ -100,7 +100,7 @@ const AddEventsForm = () => {
     <FormikProvider value={formik}>
       <form onSubmit={formik.handleSubmit}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          პროგრამაში განრიგის დამატება
+          პროგრამაში განრიგის დამატება უნდა მოხდეს ბოლოს
         </Typography>
         <FormControlLabel
           control={

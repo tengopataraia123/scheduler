@@ -123,6 +123,7 @@ export default function SiteWrapper({ children }) {
             Scheduler
           </Typography>
         </Toolbar>
+        <Divider />
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>

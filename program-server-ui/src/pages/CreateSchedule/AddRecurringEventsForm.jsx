@@ -66,7 +66,7 @@ const AddRecurringEvents = ({ formik }) => {
             helperText={formik.touched.subjectCode && formik.errors.subjectCode}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <TextField
             name="recurringStartDate"
             label="დაწყების თარიღი"
@@ -85,7 +85,7 @@ const AddRecurringEvents = ({ formik }) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <TextField
             name="recurringEndDate"
             label="დასრულების თარიღი"
@@ -104,8 +104,8 @@ const AddRecurringEvents = ({ formik }) => {
           />
         </Grid>
 
-        {/* Days under Start Date */}
-        <Grid item xs={6}>
+        {/* Days - Now using full width for each section */}
+        <Grid item xs={12}>
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -115,7 +115,7 @@ const AddRecurringEvents = ({ formik }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {daysData.slice(0, 4).map((day, index) => (
+              {daysData.map((day, index) => (
                 <TableRow key={day.name}>
                   <TableCell padding="checkbox">
                     <Checkbox
@@ -143,56 +143,6 @@ const AddRecurringEvents = ({ formik }) => {
                       value={day.endHour}
                       onChange={(e) =>
                         handleHourChange(index, "endHour", e.target.value)
-                      }
-                      disabled={!day.isChecked}
-                      InputLabelProps={{ shrink: true }}
-                      inputProps={{ step: 60 }}
-                      fullWidth
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Grid>
-        <Grid item xs={6}>
-          <Table size="small" sx={{ marginLeft: "auto", marginRight: 0 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ minWidth: 180 }}>კვირის დღეები</TableCell>
-                <TableCell sx={{ minWidth: 130 }}>დაწყების საათი</TableCell>
-                <TableCell sx={{ minWidth: 130 }}>დასრულების საათი</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {daysData.slice(4).map((day, index) => (
-                <TableRow key={day.name}>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      checked={day.isChecked}
-                      onChange={() => handleCheckboxChange(index + 4)}
-                    />
-                    {day.name}
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      type="time"
-                      value={day.startHour}
-                      onChange={(e) =>
-                        handleHourChange(index + 4, "startHour", e.target.value)
-                      }
-                      disabled={!day.isChecked}
-                      InputLabelProps={{ shrink: true }}
-                      inputProps={{ step: 60 }}
-                      fullWidth
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TextField
-                      type="time"
-                      value={day.endHour}
-                      onChange={(e) =>
-                        handleHourChange(index + 4, "endHour", e.target.value)
                       }
                       disabled={!day.isChecked}
                       InputLabelProps={{ shrink: true }}

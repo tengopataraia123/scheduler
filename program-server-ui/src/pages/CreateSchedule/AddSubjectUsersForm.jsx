@@ -154,7 +154,7 @@ const AddSubjectUsersForm = () => {
   return (
     <form>
       <Typography variant="h6" sx={{ mb: 2 }}>
-        საგანზე სტუდენტი და ლექტორი დაამატეთ მხოლოდ განრიგის შექმნის შემდეგ
+        დაარეგისტრირეთ საგანზე სტუდენტები და ლექტორები
         <label htmlFor="import-excel">
           <input
             accept=".xlsx, .xls"
