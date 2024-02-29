@@ -18,7 +18,6 @@ import { toast } from "react-toastify";
 import AddRecurringEvents from "./AddRecurringEventsForm";
 
 const initialValues = {
-  subjectCode: "",
   events: [
     {
       subjectCode: "",
@@ -49,72 +48,6 @@ const validationSchema = yup.object({
   applySubjectCodeToAll: yup.boolean(),
   recurring: yup.boolean(),
 });
-function calculateEventDates(recurringStartDate, recurringEndDate, daysData) {
-  const startDate = new Date(recurringStartDate);
-  const endDate = new Date(recurringEndDate);
-  let dates = [];
-
-  while (startDate <= endDate) {
-    daysData.forEach((day) => {
-      if (day.isChecked) {
-        const dayOfWeek = startDate.getDay();
-        const dayIndex = [
-          "კვირა",
-          "ორშაბათი",
-          "სამშაბათი",
-          "ოთხშაბათი",
-          "ხუთშაბათი",
-          "პარასკევი",
-          "შაბათი",
-        ].indexOf(day.name);
-        if (dayOfWeek === dayIndex) {
-          const startDateTime = new Date(startDate);
-          const [startHours, startMinutes] = day.startHour.split(":");
-          startDateTime.setHours(startHours, startMinutes, 0, 0);
-
-          const endDateTime = new Date(startDate);
-          const [endHours, endMinutes] = day.endHour.split(":");
-          endDateTime.setHours(endHours, endMinutes, 0, 0);
-
-          dates.push({
-            startDate: startDateTime.toISOString(),
-            endDate: endDateTime.toISOString(),
-          });
-        }
-      }
-    });
-
-    startDate.setDate(startDate.getDate() + 1);
-  }
-
-  return dates;
-}
-
-function generateRecurringEventsPayload(formValues, applySubjectCodeToAll) {
-  const { recurringStartDate, recurringEndDate, events } = formValues;
-  let subjectCode = formValues.subjectCode;
-  let payload = [];
-
-  if (applySubjectCodeToAll && events.length > 0 && events[0].subjectCode) {
-    subjectCode = events[0].subjectCode;
-  }
-
-  const recurringDates = calculateEventDates(
-    recurringStartDate,
-    recurringEndDate,
-    events
-  );
-
-  recurringDates.forEach((event) => {
-    payload.push({
-      subjectCode: subjectCode,
-      startDate: event.startDate,
-      endDate: event.endDate,
-    });
-  });
-
-  return payload;
-}
 
 const AddEventsForm = () => {
   const [applySubjectCodeToAll, setApplySubjectCodeToAll] = useState(true);
@@ -124,18 +57,11 @@ const AddEventsForm = () => {
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      let payload;
-      if (recurring) {
-        payload = generateRecurringEventsPayload(values, applySubjectCodeToAll);
-      } else {
-        payload = values.events.map((event) => ({
-          subjectCode: applySubjectCodeToAll
-            ? values.events[0]?.subjectCode || ""
-            : event.subjectCode,
-          startDate: event.startDate,
-          endDate: event.endDate,
-        }));
-      }
+      const payload = values.events.map((event) => ({
+        subjectCode: event.subjectCode,
+        startDate: event.startDate,
+        endDate: event.endDate,
+      }));
 
       postAddEvents(payload)
         .then(() => {
@@ -148,25 +74,25 @@ const AddEventsForm = () => {
         });
     },
   });
+
   const handleToggleChange = (event) => {
     const { name, checked } = event.target;
-
-    if (name === "recurring") {
-      setRecurring(checked);
-    } else if (name === "applySubjectCodeToAll") {
+    if (name === "applySubjectCodeToAll") {
       setApplySubjectCodeToAll(checked);
-
-      if (checked) {
-        const firstSubjectCode =
-          formik.values.events.length > 0
-            ? formik.values.events[0].subjectCode
-            : "";
+      if (
+        checked &&
+        formik.values.events.length > 0 &&
+        formik.values.events[0].subjectCode
+      ) {
+        const firstSubjectCode = formik.values.events[0].subjectCode;
         const updatedEvents = formik.values.events.map((event) => ({
           ...event,
           subjectCode: firstSubjectCode,
         }));
         formik.setFieldValue("events", updatedEvents);
       }
+    } else if (name === "recurring") {
+      setRecurring(checked);
     }
   };
 
@@ -182,7 +108,6 @@ const AddEventsForm = () => {
               checked={applySubjectCodeToAll}
               onChange={handleToggleChange}
               name="applySubjectCodeToAll"
-              disabled={recurring}
             />
           }
           label="დაამატეთ საგნის კოდი ყველა ლექციისთვის"
@@ -308,7 +233,7 @@ const AddEventsForm = () => {
                     onClick={() =>
                       insert(formik.values.events.length, {
                         subjectCode: applySubjectCodeToAll
-                          ? formik.values.events[0]?.subjectCode || ""
+                          ? formik.values.events[0].subjectCode
                           : "",
                         startDate: "",
                         endDate: "",
