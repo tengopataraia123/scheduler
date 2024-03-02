@@ -54,7 +54,6 @@ namespace ProgramServer.Application.Services.Events
             
             var subject = await _subjectRepository.Where(o => o.Code == eventModel.SubjectCode).FirstOrDefaultAsync();
             eventModel.SubjectId = subject.Id;
-            //var eventEntity = _mapper.Map<Event>(eventModel);
             var eventEntity = new Event
             {
                 SubjectId = eventModel.SubjectId,
@@ -82,16 +81,17 @@ namespace ProgramServer.Application.Services.Events
 
                 if (!result.IsValid)
                     throw new ValidationException(result.Errors);
-
-                //var eventEntity = _mapper.Map<Event>(eventModel);
-
                 var eventId = await Add(eventModel);
 
-                //await _eventRepository.SaveAsync();
                 GenerateBluetoothCodes(eventId,eventModel.StartDate,eventModel.EndDate, users);
             }
                             
             await _bluetoothCodeRepository.SaveAsync();
+        }
+
+        public Task AddRecurringEvents(ReccuringEventCreateModel reccuringEvent)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<List<EventGetModel>> GetAll()
@@ -108,8 +108,6 @@ namespace ProgramServer.Application.Services.Events
         {
             await _eventRepository.Delete(o=> eventIds.Contains(o.Id));
         }
-
-
 
         private void GenerateBluetoothCodes(int eventId,DateTime startDate, DateTime endTime, List<User> users)
         {

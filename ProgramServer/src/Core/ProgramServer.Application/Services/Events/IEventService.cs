@@ -7,6 +7,7 @@ namespace ProgramServer.Application.Services.Events
     {
         Task<int> Add(EventCreateModel eventModel);
         Task AddEvents(List<EventCreateModel> events);
+        Task AddRecurringEvents(ReccuringEventCreateModel reccuringEvent);
         Task<List<EventGetModel>> GetAll();
         Task DeleteEvents(List<int> eventIds);
     }

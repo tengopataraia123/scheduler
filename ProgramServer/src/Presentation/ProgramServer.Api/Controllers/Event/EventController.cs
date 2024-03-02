@@ -31,6 +31,13 @@ namespace ProgramServer.Api.Controllers.Event
             return Ok();
         }
 
+        [HttpPost("AddRecurringEvents")]
+        public async Task<ActionResult> AddRecurringEvents([FromBody] ReccuringEventCreateModel reccuringEvent)
+        {
+            await _eventService.AddRecurringEvents(reccuringEvent);
+            return Ok();
+        }
+
         [HttpGet("GetAll")]
         public async Task<ActionResult<List<EventGetModel>>> GetAll()
         {

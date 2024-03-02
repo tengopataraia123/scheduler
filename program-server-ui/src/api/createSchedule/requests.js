@@ -26,6 +26,14 @@ export const postAddEvents = (eventData) => {
   });
 };
 
+export const postAddRecurringEvents = (recurringEventData) => {
+  return axios.post(`${apiUrl}/Event/AddRecurringEvents`, recurringEventData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+};
+
 export const postAddSubjectUsers = (subjectUsersData) => {
   return axios.post(`${apiUrl}/Subject/AddSubjectUsers`, subjectUsersData, {
     headers: {
