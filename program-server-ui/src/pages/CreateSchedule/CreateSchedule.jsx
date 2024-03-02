@@ -12,6 +12,7 @@ import AddSubjectForm from "./AddSubjectForm";
 import AddStudentsForm from "./AddStudentsForm";
 import AddEventsForm from "./AddEventsForm";
 import AddSubjectUsersForm from "./AddSubjectUsersForm";
+import AddRecurringEventsForm from "./AddRecurringEventsForm";
 
 const CreateSchedule = () => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -37,15 +38,22 @@ const CreateSchedule = () => {
             <MenuItem value="AddSubjectStudents">
               საგანი & მომხმარებელი
             </MenuItem>
-            <MenuItem value="AddEvent"> განრიგი</MenuItem>
+            <MenuItem value="AddEvent"> განრიგის ხელით დამატება</MenuItem>
+            <MenuItem value="AddRecurringEventsForm">
+              {" "}
+              განრიგის გენერაცია
+            </MenuItem>
           </Select>
         </FormControl>
       </Box>
 
       {selectedOption === "AddSubject" && <AddSubjectForm />}
       {selectedOption === "AddStudent" && <AddStudentsForm />}
-      {selectedOption === "AddEvent" && <AddEventsForm />}
       {selectedOption === "AddSubjectStudents" && <AddSubjectUsersForm />}
+      {selectedOption === "AddEvent" && <AddEventsForm />}
+      {selectedOption === "AddRecurringEventsForm" && (
+        <AddRecurringEventsForm />
+      )}
     </>
   );
 };
