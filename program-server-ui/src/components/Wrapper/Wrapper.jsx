@@ -98,6 +98,7 @@ export default function SiteWrapper({ children }) {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
+      <Divider />
       <AppBar
         position="fixed"
         color="default"
@@ -124,7 +125,9 @@ export default function SiteWrapper({ children }) {
           </Typography>
         </Toolbar>
       </AppBar>
+      <Divider />
       <Drawer variant="permanent" open={open}>
+        <Divider />
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
