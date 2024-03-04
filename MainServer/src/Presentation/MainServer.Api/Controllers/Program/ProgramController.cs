@@ -28,7 +28,6 @@ namespace MainServer.Api.Controllers.Program
             return Ok(program);
         }
 
-        [AllowAnonymous]
         [HttpGet("GetAllPrograms")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<ProgramModel>>> GetAllPrograms()
