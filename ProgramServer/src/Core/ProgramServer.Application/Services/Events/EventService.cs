@@ -73,6 +73,12 @@ namespace ProgramServer.Application.Services.Events
 
         public async Task AddEvents(List<EventCreateModel> events)
         {
+            foreach (var eventModel in events)
+            {
+                var subject = await _subjectRepository.Where(o => o.Code == eventModel.SubjectCode).FirstOrDefaultAsync();
+                eventModel.SubjectId = subject.Id;
+            }
+            
             var users = await _subjectUserRepository.Where(o => o.SubjectId == events.First().SubjectId).Include(o => o.User).Select(o => o.User).ToListAsync();
             var validator = new EventCreateModelValidator();
             foreach (var eventModel in events)
