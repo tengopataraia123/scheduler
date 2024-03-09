@@ -16,9 +16,14 @@ namespace ProgramServer.Application.Common.Mappings
         public MappingProfile()
         {
             CreateMap<SubjectUser, UserCreateModel>().ReverseMap();
-            CreateMap<SubjectUserModel, SubjectUser>()
+            //CreateMap<SubjectUserModel, SubjectUser>()
+            //    .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+            //    .ForMember(dest => dest.SubjectId, opt => opt.MapFrom(src => src.SubjectId));
+            CreateMap<SubjectUser, SubjectUserModel>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(dest => dest.SubjectId, opt => opt.MapFrom(src => src.SubjectId));
+                .ForMember(dest => dest.SubjectId, opt => opt.MapFrom(src => src.SubjectId))
+                .ForMember(dest => dest.SubjectCode, opt => opt.MapFrom(src => src.Subject.Code))
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email));
 
             CreateMap<User, UserCreateModel>().ReverseMap();
             CreateMap<User, UserGetModel>()
