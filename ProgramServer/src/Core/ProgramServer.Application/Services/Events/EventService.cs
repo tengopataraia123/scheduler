@@ -73,25 +73,38 @@ namespace ProgramServer.Application.Services.Events
 
         public async Task AddEvents(List<EventCreateModel> events)
         {
-            //foreach (var eventModel in events)
-            //{
-            //    var subject = await _subjectRepository.Where(o => o.Code == eventModel.SubjectCode).FirstOrDefaultAsync();
-            //    eventModel.SubjectId = subject.Id;
-            //}
-            
-            var users = await _subjectUserRepository.Where(o => o.SubjectId == events.First().SubjectId).Include(o => o.User).Select(o => o.User).ToListAsync();
             var validator = new EventCreateModelValidator();
             foreach (var eventModel in events)
             {
                 var result = validator.Validate(eventModel);
-
                 if (!result.IsValid)
                     throw new ValidationException(result.Errors);
-                var eventId = await Add(eventModel);
-
-                GenerateBluetoothCodes(eventId,eventModel.StartDate,eventModel.EndDate, users);
             }
-                            
+
+            var subjectCodes = events.Select(e => e.SubjectCode).Distinct().ToList();
+            var subjects = await _subjectRepository.Where(s => subjectCodes.Contains(s.Code)).ToListAsync();
+
+            foreach (var eventModel in events)
+            {
+                var subject = subjects.FirstOrDefault(s => s.Code == eventModel.SubjectCode);
+                if (subject != null)
+                {
+                    eventModel.SubjectId = subject.Id;
+                }
+                else
+                {
+                    throw new Exception($"Subject with code: {eventModel.SubjectCode}, doesn't exist!");
+                }
+            }
+            var subjectId = events.First().SubjectId;
+            var users = await _subjectUserRepository.Where(o => o.SubjectId == subjectId).Include(o => o.User).Select(o => o.User).ToListAsync();
+
+            foreach (var eventModel in events)
+            {
+                var eventId = await Add(eventModel);
+                await GenerateBluetoothCodes(eventId, eventModel.StartDate, eventModel.EndDate, users);
+            }
+
             await _bluetoothCodeRepository.SaveAsync();
         }
 
@@ -110,37 +123,35 @@ namespace ProgramServer.Application.Services.Events
         {
             return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
         }
+
         public async Task DeleteEvents(List<int> eventIds)
         {
             await _eventRepository.Delete(o=> eventIds.Contains(o.Id));
         }
 
-        private void GenerateBluetoothCodes(int eventId,DateTime startDate, DateTime endTime, List<User> users)
+        private async Task GenerateBluetoothCodes(int eventId, DateTime startDate, DateTime endTime, List<User> users)
         {
-            var bluetoothCodes = new List<BluetoothCode>();
-            
             foreach (var user in users)
             {
+                var attendance = await CreateAttendanceAsync(user.Id, eventId);
+
+                var bluetoothCodes = new List<BluetoothCode>();
                 var code = GenerateUniqueCode(bluetoothCodes);
-                var attendance = new Attendance
-                {
-                    UserId = user.Id,
-                    EventId = eventId,
-                }; 
-                
-                for (var time = startDate; time <= endTime; time = time.AddMinutes(20))
+
+                for (var time = EnsureUtc(startDate); time <= EnsureUtc(endTime); time = time.AddMinutes(20))
                 {
                     bluetoothCodes.Add(new BluetoothCode
                     {
                         Code = code,
-                        ActivationTime = time,
-                        AttendanceId = attendance.Id
+                        ActivationTime = time, 
+                        AttendanceId = attendance.Id 
                     });
                 }
-                _attendanceRepository.Add(attendance);
+
                 _bluetoothCodeRepository.AddRange(bluetoothCodes);
             }
         }
+
 
         private string GenerateUniqueCode(List<BluetoothCode> bluetoothCodes, int counter = 0)
         {
@@ -162,6 +173,21 @@ namespace ProgramServer.Application.Services.Events
 
             return result.ToString();
         }
+
+        private async Task<Attendance> CreateAttendanceAsync(int userId, int eventId)
+        {
+            var attendance = new Attendance
+            {
+                UserId = userId,
+                EventId = eventId,
+            };
+
+            _attendanceRepository.Add(attendance);
+            await _attendanceRepository.SaveAsync(); 
+
+            return attendance; 
+        }
+
     }
 }
 
