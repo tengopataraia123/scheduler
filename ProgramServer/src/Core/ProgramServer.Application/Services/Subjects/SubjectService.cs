@@ -84,9 +84,13 @@ namespace ProgramServer.Application.Services.Subjects
                 {
                     continue;
                 }
+                var subjectUserEntity = new SubjectUser
+                {
+                    SubjectId = subjectUser.SubjectId, 
+                    UserId = subjectUser.UserId, 
+                };
 
-                var entity = _mapper.Map<SubjectUser>(subjectUser);
-                _subjectUserRepository.Add(entity);
+                _subjectUserRepository.Add(subjectUserEntity);
                 await _subjectUserRepository.SaveAsync();
             }
         }

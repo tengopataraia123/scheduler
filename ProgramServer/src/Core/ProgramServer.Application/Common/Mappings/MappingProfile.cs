@@ -20,7 +20,8 @@ namespace ProgramServer.Application.Common.Mappings
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.SubjectId, opt => opt.MapFrom(src => src.SubjectId))
                 .ForMember(dest => dest.SubjectCode, opt => opt.MapFrom(src => src.Subject.Code))
-                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email));
+                .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User.Email))
+                .ReverseMap();
 
             CreateMap<User, UserCreateModel>().ReverseMap();
             CreateMap<User, UserGetModel>()
@@ -29,6 +30,7 @@ namespace ProgramServer.Application.Common.Mappings
 
             CreateMap<Survey, SurveyModel>().ReverseMap();
             CreateMap<Response, ResponseModel>().ReverseMap();
+
             CreateMap<Event, EventCreateModel>().ReverseMap();
             CreateMap<Event, EventGetModel>()
                 .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.Id))
