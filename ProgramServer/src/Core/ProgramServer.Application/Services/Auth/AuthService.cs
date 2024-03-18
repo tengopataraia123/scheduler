@@ -70,4 +70,28 @@ public class AuthService : IAuthService
         
         return tokenHandler.WriteToken(token);
     }
+
+    public string GenerateAdminToken()
+    {
+        var claims = new Claim[]
+        {
+            new Claim(ClaimTypes.Role, "admin"),
+            new Claim(ClaimTypes.Email, "admin"),
+            new Claim(ClaimTypes.NameIdentifier, "admin")
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_secret);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+
+            Expires = DateTime.Now.AddDays(7),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+
+        return tokenHandler.WriteToken(token);
+    }
 }

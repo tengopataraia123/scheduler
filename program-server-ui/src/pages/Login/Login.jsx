@@ -19,7 +19,7 @@ import { useAuth } from "context/authContext";
 const validationSchema = yup.object().shape({
   email: yup
     .string()
-    .email("ელფოსტის ფორმატი არასწორია.")
+    // .email("ელფოსტის ფორმატი არასწორია.")
     .required("ელფოსტის ველი სავალდებულოა."),
   password: yup.string().required("პაროლის ველი სავალდებულოა."),
 });

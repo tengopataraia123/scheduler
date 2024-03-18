@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const mainApiUrl = process.env.REACT_APP_MAIN_API_URL;
+const programServerUri = process.env.REACT_APP_API_URL;
 
 export const login = (params) => {
-  return axios.post(`${mainApiUrl}/UserLogin/UserLogin`, {
+  return axios.post(`${programServerUri}/Auth/AuthenticateAdmin`, {
     mail: params.email,
     password: params.password,
   });
