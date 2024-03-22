@@ -34,6 +34,6 @@ public class AuthController : ControllerBase
         if (auth.Mail != adminUsername && auth.Password != adminPassword)
             return Forbid();
         var token = _authService.GenerateAdminToken();
-        return Ok(token);
+        return Ok(new { token = token });
     }
 }
