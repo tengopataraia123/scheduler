@@ -77,7 +77,7 @@ public class AuthService : IAuthService
         {
             new Claim(ClaimTypes.Role, "admin"),
             new Claim(ClaimTypes.Email, "admin"),
-            new Claim(ClaimTypes.NameIdentifier, "admin")
+            new Claim(ClaimTypes.NameIdentifier, "0")
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
