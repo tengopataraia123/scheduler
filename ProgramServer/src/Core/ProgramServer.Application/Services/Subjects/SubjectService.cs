@@ -48,8 +48,8 @@ namespace ProgramServer.Application.Services.Subjects
             var validator = new SubjectCreateModelValidator();
             var result = validator.Validate(subjectModel);
 
-            var subjectInDb = await _subjectRepository.Where(o => o.Code == subjectModel.Code).FirstOrDefaultAsync();
-            if (subjectInDb != null)
+            var subjectExcists = await _subjectRepository.GetAll().AnyAsync(o => o.Code == subjectModel.Code);
+            if (subjectExcists)
                 throw new SubjectAlreadyExistsException(subjectModel.Code);
 
             if (!result.IsValid)
