@@ -126,6 +126,8 @@ app.UseWhen(o => o.Request.Headers.Keys.Contains("RsaEncrypted"), app => app.Use
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware <ExceptionMiddleware>();
+
 app.MapControllers();
 
 app.Run();

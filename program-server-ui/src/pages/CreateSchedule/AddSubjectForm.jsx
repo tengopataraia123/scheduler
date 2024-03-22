@@ -33,6 +33,9 @@ const AddSubjectForm = () => {
     postCreateSubject(values).then((response) => {
       toast.success("საგანი დაემატა");
       formik.resetForm();
+    })
+    .catch(error=>{
+      toast.error(error.response.data.Message)
     });
   };
   const formik = useFormik({

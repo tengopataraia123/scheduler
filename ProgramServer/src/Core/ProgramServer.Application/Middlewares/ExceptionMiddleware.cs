@@ -51,6 +51,11 @@ namespace ProgramServer.Application.Middlewares
                 message = exception.Message;
                 status = HttpStatusCode.NotFound;
             }
+            else if (exceptionType == typeof(SubjectAlreadyExistsException))
+            {
+                message = exception.Message;
+                status = HttpStatusCode.NotFound;
+            }
             else if (exceptionType == typeof(ValidationException))
             {
                 status = HttpStatusCode.BadRequest;
