@@ -24,7 +24,6 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { CircularProgress } from "@mui/material";
-
 import * as XLSX from "xlsx";
 
 const Events = () => {
@@ -71,6 +70,17 @@ const Events = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  function formatUTCDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getUTCFullYear();
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+    const day = date.getUTCDate().toString().padStart(2, "0");
+    const hours = date.getUTCHours().toString().padStart(2, "0");
+    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+    const seconds = date.getUTCSeconds().toString().padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -323,12 +333,8 @@ const Events = () => {
                         weekday: "long",
                       })}
                     </TableCell>
-                    <TableCell>
-                      {new Date(event.startDate).toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(event.endDate).toLocaleString()}
-                    </TableCell>
+                    <TableCell>{formatUTCDate(event.startDate)}</TableCell>
+                    <TableCell>{formatUTCDate(event.endDate)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
