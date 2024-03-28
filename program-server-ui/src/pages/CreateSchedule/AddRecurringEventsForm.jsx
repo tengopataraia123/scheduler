@@ -74,10 +74,11 @@ const AddRecurringEventsForm = () => {
     onSubmit: (values) => {
       const filteredDays = values.daysOfWeek
         .filter((day) => day.isChecked)
-        .map(({ day, startHour, endHour }) => ({
+        .map(({ day, startHour, endHour, isChecked }) => ({
           day,
           startHour,
           endHour,
+          isChecked,
         }));
 
       const payload = {

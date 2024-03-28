@@ -14,6 +14,7 @@ using System.Text;
 using ProgramServer.Domain.Attendances;
 using ProgramServer.Domain.Users;
 using System.Diagnostics.Tracing;
+using Microsoft.Extensions.Logging;
 
 namespace ProgramServer.Application.Services.Events
 {
@@ -108,10 +109,70 @@ namespace ProgramServer.Application.Services.Events
             await _bluetoothCodeRepository.SaveAsync();
         }
 
-        public Task AddRecurringEvents(ReccuringEventCreateModel reccuringEvent)
+        public async Task AddRecurringEvents(ReccuringEventCreateModel recurringEventModel)
         {
-            throw new NotImplementedException();
+            var activeDays = recurringEventModel.DaysOfWeek.Where(d => d.IsChecked).ToList();
+
+            foreach (var dayOfWeek in activeDays)
+            {
+                if (!DayOfWeekMapping.TryGetValue(dayOfWeek.Day, out var englishDayName))
+                {
+                    throw new Exception($"Invalid day of week: {dayOfWeek.Day}");
+                }
+                if (!Enum.TryParse<DayOfWeek>(englishDayName, true, out var dayOfWeekEnum))
+                {
+                    throw new Exception($"Invalid day of week: {dayOfWeek.Day}");
+                }
+
+                var currentDate = recurringEventModel.RecurringStartDate;
+                while (currentDate <= recurringEventModel.RecurringEndDate)
+                {
+                    if (currentDate.DayOfWeek == dayOfWeekEnum)
+                    {
+                        var startTimeSpan = TimeSpan.Parse(dayOfWeek.StartHour);
+                        var endTimeSpan = TimeSpan.Parse(dayOfWeek.EndHour);
+
+                        var startDateTime = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day).Add(startTimeSpan);
+                        var endDateTime = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day).Add(endTimeSpan);
+
+                        var eventCreateModel = new EventCreateModel
+                        {
+                            SubjectCode = recurringEventModel.SubjectCode,
+                            StartDate = startDateTime,
+                            EndDate = endDateTime,
+                        };
+
+                        var eventId = await Add(eventCreateModel);
+                        var subjects = await _subjectRepository.Where(s => eventCreateModel.SubjectCode == s.Code).ToListAsync();
+                        var subject = subjects.FirstOrDefault(s => s.Code == eventCreateModel.SubjectCode);
+                        if (subject != null)
+                        {
+                            eventCreateModel.SubjectId = subject.Id;
+                        }
+                        else
+                        {
+                            throw new Exception($"Subject with code: {eventCreateModel.SubjectCode}, doesn't exist!");
+                        }
+                        var users = await _subjectUserRepository.Where(o => o.SubjectId == subject.Id).Include(o => o.User).Select(o => o.User).ToListAsync();
+
+                        await GenerateBluetoothCodes(eventId, eventCreateModel.StartDate, eventCreateModel.EndDate, users);
+                    }
+
+                    currentDate = currentDate.AddDays(1);
+                }
+            }
         }
+
+        static readonly Dictionary<string, string> DayOfWeekMapping = new Dictionary<string, string>
+        {
+            { "ორშაბათი", "Monday" },
+            { "სამშაბათი", "Tuesday" },
+            { "ოთხშაბათი", "Wednesday" },
+            { "ხუთშაბათი", "Thursday" },
+            { "პარასკევი", "Friday" },
+            { "შაბათი", "Saturday" },
+            { "კვირა", "Sunday" }
+        };
 
         public async Task<List<EventGetModel>> GetAll()
         {
