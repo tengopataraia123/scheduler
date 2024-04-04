@@ -196,11 +196,13 @@ namespace ProgramServer.Application.Services.Events
             {
                 var attendance = await CreateAttendanceAsync(user.Id, eventId);
 
+                var existingBluetoothCodes = await _bluetoothCodeRepository.GetAll().Select(o => o.Code).ToListAsync();
+                
                 var bluetoothCodes = new List<BluetoothCode>();
-                var code = GenerateUniqueCode(bluetoothCodes);
 
                 for (var time = EnsureUtc(startDate); time <= EnsureUtc(endTime); time = time.AddMinutes(20))
                 {
+                    var code = GenerateUniqueCode(existingBluetoothCodes);
                     bluetoothCodes.Add(new BluetoothCode
                     {
                         Code = code,
@@ -214,7 +216,7 @@ namespace ProgramServer.Application.Services.Events
         }
 
 
-        private string GenerateUniqueCode(List<BluetoothCode> bluetoothCodes, int counter = 0)
+        private string GenerateUniqueCode(List<string> bluetoothCodes, int counter = 0)
         {
             if (counter == 10)
                 throw new Exception("Can't Generate bluetooth codes");
@@ -229,7 +231,7 @@ namespace ProgramServer.Application.Services.Events
                 result.Append(symbols[index]);
             }
 
-            if (bluetoothCodes.Any(o => o.Code == result.ToString()))
+            if (bluetoothCodes.Any(o => o == result.ToString()))
                 return GenerateUniqueCode(bluetoothCodes, counter++);
 
             return result.ToString();
