@@ -9,7 +9,7 @@ namespace ProgramServer.Application.Services.Subjects
         Task AddSubjectUsers(List<SubjectUserModel> subjectUser);
         Task<List<SubjectGetModel>> GetAllSubjects();
         Task<List<SubjectUserModel>> GetUsersBySubjectCode(string subjectCode);
-        Task DeleteSubject(string subjectCode);
+        Task DeleteSubject(List<int> subjectIds);
     }
 }
 

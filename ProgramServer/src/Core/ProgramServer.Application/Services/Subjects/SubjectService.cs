@@ -13,6 +13,11 @@ using ProgramServer.Domain.Attandances;
 using ProgramServer.Domain.Attendances;
 using ProgramServer.Domain.Events;
 using ProgramServer.Domain.SubjectUsers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.EntityFrameworkCore.Scaffolding.TableSelectionSet;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System;
+using System.Collections.Generic;
 
 namespace ProgramServer.Application.Services.Subjects
 {
@@ -115,18 +120,34 @@ namespace ProgramServer.Application.Services.Subjects
 
             return _mapper.Map<List<SubjectUserModel>>(subjectUsers);
         }
-
         public async Task<List<SubjectGetModel>> GetAllSubjects()
         {
             var allusers = await _subjectRepository.GetAll().ToListAsync();
             return _mapper.Map<List<SubjectGetModel>>(allusers);
         }
 
-        public Task DeleteSubject(string subjectCode)
+        public async Task DeleteSubject(List<int> subjectIds)
         {
-            throw new NotImplementedException();
-        }
+            var subjectsToDelete = await _subjectRepository
+            .Where(subject => subjectIds.Contains(subject.Id))
+            .Include(subject => subject.SubjectUsers)
+            .ToListAsync();
 
+            foreach (var subject in subjectsToDelete)
+            {
+                if (subject.SubjectUsers.Any())
+                {
+                    throw new CannotDeleteSubjectException($"საგანის წაშლა კოდის:'{subject.Code}' შეუძლებელია. ჯერ წაშალეთ საგანზე რეგისტრირებული მომხმარებლები!");
+                }
+            }
+
+            foreach (var subject in subjectsToDelete)
+            {
+                _subjectRepository.Delete(subject);
+            }
+
+            await _subjectRepository.SaveAsync();
+        }
     }
 }
 

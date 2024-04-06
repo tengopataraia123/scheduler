@@ -26,6 +26,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 import * as XLSX from "xlsx";
+import { toast } from "react-toastify";
 
 const SchedulerSubjects = () => {
   const [subjects, setSubjects] = useState([]);
@@ -124,10 +125,18 @@ const SchedulerSubjects = () => {
         setSelectedSubjects({});
         fetchData();
       } catch (error) {
-        alert("ვერ მოხერხდა საგნის წაშლა:");
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.error
+        ) {
+          toast(`ვერ მოხერხდა საგნის წაშლა: ${error.response.data.error}`);
+        } else {
+          toast("ვერ მოხერხდა საგნის წაშლა. გთხოვთ, ცადეთ თავიდან.");
+        }
       }
     } else {
-      alert("საგანი არაა მონიშნული!");
+      toast("საგანი არაა მონიშნული!");
     }
   };
 

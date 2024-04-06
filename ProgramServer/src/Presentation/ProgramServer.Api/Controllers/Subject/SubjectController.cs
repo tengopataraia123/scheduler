@@ -2,6 +2,7 @@
 using ProgramServer.Application.DTOs;
 using ProgramServer.Application.Services.Subjects;
 using Microsoft.AspNetCore.Authorization;
+using ProgramServer.Application.Exceptions;
 
 namespace ProgramServer.Api.Controllers.Subject
 {
@@ -50,12 +51,24 @@ namespace ProgramServer.Api.Controllers.Subject
         }
 
 
-        [HttpDelete("DeleteSubject")]
-        public async Task<ActionResult> DeleteSubject([FromRoute] string subjectCode)
+        [HttpDelete("DeleteSubjects")]
+        public async Task<IActionResult> DeleteSubjects([FromBody] List<int> subjectIds)
         {
-            await _subjectService.DeleteSubject(subjectCode);
-            return Ok();
+            try
+            {
+                await _subjectService.DeleteSubject(subjectIds);
+                return Ok(); 
+            }
+            catch (CannotDeleteSubjectException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred processing your request. Please try again later." });
+            }
         }
+
     }
 }
 
