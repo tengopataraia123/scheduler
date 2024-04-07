@@ -200,7 +200,7 @@ namespace ProgramServer.Application.Services.Events
                 
                 var bluetoothCodes = new List<BluetoothCode>();
 
-                for (var time = EnsureUtc(startDate); time <= EnsureUtc(endTime); time = time.AddMinutes(20))
+                for (var time = startDate; time <= endTime; time = time.AddMinutes(20))
                 {
                     var code = GenerateUniqueCode(existingBluetoothCodes);
                     bluetoothCodes.Add(new BluetoothCode
