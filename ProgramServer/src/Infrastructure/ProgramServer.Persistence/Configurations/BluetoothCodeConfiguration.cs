@@ -17,6 +17,8 @@ namespace ProgramServer.Persistence.Configurations
 
             builder.Property(o => o.Code).HasMaxLength(5);
 
+            builder.Property(o => o.ActivationTime).HasColumnType("timestamp without time zone");
+
             builder.HasOne(o => o.Attendance).WithMany().HasForeignKey(o => o.AttendanceId).OnDelete(DeleteBehavior.Cascade);
         }
     }
