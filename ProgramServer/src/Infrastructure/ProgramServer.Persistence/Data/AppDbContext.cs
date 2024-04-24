@@ -22,6 +22,7 @@ namespace ProgramServer.Persistence.Data
         public DbSet<Response> Responses { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<BluetoothCode> BluetoothCodes { get; set; }
+        public DbSet<BluetoothLog> BluetoothLogs { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options) { }
 

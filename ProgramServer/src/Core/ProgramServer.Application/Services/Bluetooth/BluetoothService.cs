@@ -10,10 +10,14 @@ public class BluetoothService : IBluetoothService
 {
     private readonly IRepository<BluetoothCode> _bluetoothCodeRepository;
     private readonly IRepository<Attendance> _attendanceRepository;
-    public BluetoothService(IRepository<BluetoothCode> bluetoothCodeRepository, IRepository<Attendance> attendanceRepository)
+    private readonly IRepository<BluetoothLog> _bluetoothLogsRepository;
+    public BluetoothService(IRepository<BluetoothCode> bluetoothCodeRepository,
+        IRepository<Attendance> attendanceRepository,
+        IRepository<BluetoothLog> bluetoothLogsRepository)
     {
         _bluetoothCodeRepository = bluetoothCodeRepository;
         _attendanceRepository = attendanceRepository;
+        _bluetoothLogsRepository = bluetoothLogsRepository;
     }
     public async Task<List<AttendanceModel>> GetBluetoothCodes(int userId)
     {
@@ -37,12 +41,23 @@ public class BluetoothService : IBluetoothService
         return attendances;
     }
 
-    public async Task ScannedBluetoothCodes(List<string> codes)
+    public async Task ScannedBluetoothCodes(int userId, List<string> codes)
     {
+        foreach(var code in codes)
+        {
+            _bluetoothLogsRepository.Add(new BluetoothLog
+            {
+                ScanDate = DateTime.Now,
+                BluetoothCode = code,
+                ScannedById = userId
+            });
+        }
+
         var codesFromDb = await _bluetoothCodeRepository.Where(o => codes.Contains((o.Code))).ToListAsync();
         
         codesFromDb.ForEach(o=>o.Count++);
 
         await _bluetoothCodeRepository.SaveAsync();
+        await _bluetoothLogsRepository.SaveAsync();
     }
 }
