@@ -10,6 +10,9 @@ using MainServer.Application.Exceptions;
 using MainServer.Application.Common.Models;
 using MainServer.Application.Services.Users.Contracts;
 using System.Security.Cryptography;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace MainServer.Application.Services.Programs
 {
@@ -51,6 +54,11 @@ namespace MainServer.Application.Services.Programs
 
         public async Task Create(ProgramCreateModel programModel,int userId)
         {
+            var swaggerUrl = programModel.Url.Trim('/') + "/swagger/v1/swagger.json";
+            var isValidApi = await IsValidApi(swaggerUrl);
+            if (!isValidApi)
+                throw new ProgramApiValidationException();
+
             var validator = new ProgramCreateModelValidator();
             var result = validator.Validate(programModel);
 
@@ -251,6 +259,37 @@ namespace MainServer.Application.Services.Programs
             }
 
             return program.Url;
+        }
+
+        private async Task<bool> IsValidApi(string swaggerJsonUri)
+        {
+            var requiredPaths = new List<string>()
+            {
+                "/Auth",
+                "/Bluetooth/GetBluetoothCodes",
+                "/Bluetooth/ScannedBluetoothCodes",
+                "/Event/GetAll",
+                "/SchedulerUser/GetAll",
+                "/Subject/GetAllSubjects",
+                "/Subject/GetAllSubjectUsers/{subjectCode}",
+                "/Survey/CreateResponse"
+            };
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(swaggerJsonUri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            var json = JsonConvert.DeserializeObject<JsonObject>(responseString);
+
+            var paths = json["paths"];
+            if(paths == null) return false;
+
+            foreach(var requiredPath in requiredPaths)
+            {
+                if (!paths.AsObject().ContainsKey(requiredPath)) return false;
+            }
+
+            return true;
         }
     }
 }

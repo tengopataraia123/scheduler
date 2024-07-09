@@ -7,6 +7,7 @@ namespace ProgramServer.Application.Services.Attendances
     {
         Task<AttendanceModel> FindAttendance(int id);
         Task<List<AttendanceModel>> GetAllAttendances();
+        Task<List<AttendanceReportModel>> GetAttendances();
     }
 }
 

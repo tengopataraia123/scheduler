@@ -12,10 +12,10 @@ namespace ProgramServer.Persistence.Configurations
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
 
-            //builder.HasOne(e => e.Subject)
-            //    .WithMany(s => s.Events)
-            //    .HasForeignKey(e => e.SubjectId)
-            //    .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(e => e.Subject)
+                .WithMany(s => s.Events)
+                .HasForeignKey(e => e.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
