@@ -55,9 +55,9 @@ namespace MainServer.Application.Services.Programs
         public async Task Create(ProgramCreateModel programModel,int userId)
         {
             var swaggerUrl = programModel.Url.Trim('/') + "/swagger/v1/swagger.json";
-            var isValidApi = await IsValidApi(swaggerUrl);
-            if (!isValidApi)
-                throw new ProgramApiValidationException();
+            //var isValidApi = await IsValidApi(swaggerUrl);
+            //if (!isValidApi)
+            //    throw new ProgramApiValidationException();
 
             var validator = new ProgramCreateModelValidator();
             var result = validator.Validate(programModel);

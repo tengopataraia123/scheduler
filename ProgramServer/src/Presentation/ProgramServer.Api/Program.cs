@@ -21,6 +21,9 @@ using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using ProgramServer.Application.Services.Auth;
+using ProgramServer.Domain.Surveys;
+using ProgramServer.Application.Services.Attendances;
+using ProgramServer.Application.Services.AttendanceService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +43,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
 builder.Services.AddScoped<IResponseService, ResponseService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
 builder.Services.AddSingleton<IRequestDecryptService, RequestDecryptService>();
