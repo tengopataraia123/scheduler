@@ -3,7 +3,14 @@ import axios from "axios";
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export const programs = () => {
-  return axios.get(`${apiUrl}/Program/GetAllPrograms`);
+  return axios.get(`${apiUrl}/Program/GetAllPrograms`,
+    
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  }
+  );
 };
 
 export const postProgramCreate = (params) => {
