@@ -21,7 +21,6 @@ namespace MainServer.Api.Controllers.Program
         }
 
         [HttpGet("Find/{id}")]
-        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult<ProgramModel>> FindProgram([FromRoute] int id)
         {
             var program = await _programService.Find(id);
@@ -29,7 +28,6 @@ namespace MainServer.Api.Controllers.Program
         }
 
         [HttpGet("GetAllPrograms")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<ProgramModel>>> GetAllPrograms()
         {
             var programs = await _programService.GetAll();
@@ -37,7 +35,6 @@ namespace MainServer.Api.Controllers.Program
         }
 
         [HttpPost("Create")]
-        [Authorize(Roles = "User, Admin")]
         public async Task<ActionResult> CreateProgram([FromBody] ProgramCreateModel programModel)
         {
             var userId = Convert.ToInt32(User.Claims.Where(o=>o.Type == ClaimTypes.NameIdentifier).First().Value);
@@ -46,7 +43,6 @@ namespace MainServer.Api.Controllers.Program
         }
 
         [HttpPut("Activate/{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ActivateProgram([FromRoute] int id)
         {
             //var userId = Convert.ToInt32(User.Claims.Where(o => o.Type == ClaimTypes.NameIdentifier).First().Value);
@@ -55,7 +51,6 @@ namespace MainServer.Api.Controllers.Program
         }
 
         [HttpPut("Deactivate/{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeactivateProgram([FromRoute] int id)
         {
             await _programService.Deactivate(id, UserInfo);
@@ -112,7 +107,6 @@ namespace MainServer.Api.Controllers.Program
         }
 
         [HttpPut("Block/{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> BlockProgram([FromRoute] int id)
         {
             await _programService.Block(id);
@@ -120,7 +114,6 @@ namespace MainServer.Api.Controllers.Program
         }
 
         [HttpPut("Unblock/{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> UnblockProgram([FromRoute] int id)
         {
             await _programService.Unblock(id);
