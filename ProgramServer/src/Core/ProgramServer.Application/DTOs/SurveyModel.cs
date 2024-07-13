@@ -1,7 +1,4 @@
-﻿using System;
-using ProgramServer.Domain.Surveys;
-
-namespace ProgramServer.Application.DTOs
+﻿namespace ProgramServer.Application.DTOs
 {
     public class SurveyModel
     {
